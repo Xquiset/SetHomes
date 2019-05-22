@@ -1,0 +1,43 @@
+name: SetHomes
+main: com.samleighton.xquiset.sethomes.SetHomes
+version: 1.0
+author: Xquiset
+commands:
+   home:
+      description: Teleports a player to their home.
+      usage: /<command> <HomeName>
+      aliases: h
+   homes:
+      description: Lists all of a players homes.
+      usage: /<command>
+      aliases: lh
+   sethome:
+      description: Sets a players home at the standing location.
+      usage: /<command> <HomeName> <HomeDescription>
+      aliases: sh
+   delhome:
+      description: Deletes a home from the list of players homes.
+      usage: /<command> <HomeName>
+      aliases: dh
+   strike:
+      description: Strike fury into your enemies with your wand.
+      usage: /<command>
+permissions:
+   homes.*:
+      description: Allows all commands from the Homes plugin to be run.
+      default: op
+      children:
+         homes.home: true
+         homes.sethome: true
+         homes.delhome: true
+         homes.strike: true
+   homes.strike:
+       description: Allows a player to strike.
+       default: false
+   homes.home:
+      description: Allows a player to teleport home.
+      default: false
+   homes.sethome:
+      description: Allows a player to set homes.
+      default: false
+      
