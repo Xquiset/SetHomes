@@ -66,14 +66,14 @@ public class SetHome implements CommandExecutor{
 					//Set the home name to the given name
 					playersHome.setHomeName(args[0]);
 					
-					//Build the description as a combination of all other arguments pass
+					//Build the description as a combination of all other arguments passed
 					String desc = "";
 					for (int i = 1; i <= args.length - 1; i++) {
 						desc += args[i] + " ";
 					}
 					
 					if(desc != "") {
-						playersHome.setDesc(desc.substring(0, desc.length() -1));
+						playersHome.setDesc(desc.substring(0, desc.length() - 1));
 					}
 					
 					setHomes.saveNamedHome(uuid, playersHome);
@@ -81,12 +81,11 @@ public class SetHome implements CommandExecutor{
 					p.sendMessage(ChatColor.DARK_GREEN + "Your home \'" + playersHome.getHomeName() + "\' has been set!");
 					return true;
 				}
-				
+				//Send player message because they didn't have the proper permissions
 				p.sendMessage(ChatColor.DARK_RED + "You dont have permission to do that!");
 				return true;
 			}
 		}
 		return false;
 	}
-
 }

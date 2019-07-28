@@ -9,7 +9,7 @@ commands:
       aliases: h
    homes:
       description: Lists all of a players homes.
-      usage: /<command>
+      usage: /<command> <player>
       aliases: lh
    sethome:
       description: Sets a players home at the standing location.
@@ -27,17 +27,16 @@ permissions:
       description: Allows all commands from the Homes plugin to be run.
       default: op
       children:
-         homes.home: true
          homes.sethome: true
-         homes.delhome: true
          homes.strike: true
+         homes.gethomes: true
    homes.strike:
        description: Allows a player to strike.
        default: false
-   homes.home:
-      description: Allows a player to teleport home.
-      default: false
    homes.sethome:
       description: Allows a player to set homes.
+      default: false
+   homes.gethomes:
+      description: Lists the homes for a specific player
       default: false
       
