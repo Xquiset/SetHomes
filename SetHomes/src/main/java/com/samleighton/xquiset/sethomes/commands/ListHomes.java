@@ -1,5 +1,6 @@
 package com.samleighton.xquiset.sethomes.commands;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -35,29 +36,33 @@ public class ListHomes implements CommandExecutor{
 				return false;
 			}
 			
+			String filler = StringUtils.repeat("-", 53);
+			
+			p.sendMessage(filler);
 			//Tell the player if they have a default home set or not
 			if(setHomes.hasUnknownHomes(uuid)) {
-				p.sendMessage(ChatColor.DARK_GREEN + "Default Home is set!");
-			} else {
-				p.sendMessage(ChatColor.DARK_RED + "You have no Default Home!");
+				//Gets the name of the world the home has been set in
+				String world = setHomes.getPlayersUnnamedHome(uuid).getWorld().getName();
+				p.sendMessage(ChatColor.GOLD + "Default Home - World: " + world);
 			}
 			
 			//Check to make sure the player has homes
 			if(setHomes.hasNamedHomes(uuid)) {
 				//Print the home with its description to the player
 				for(String id : setHomes.getPlayersNamedHomes(uuid).keySet()) {
+					//Gets the name of the world the home has been set in
+					String world = setHomes.getPlayersNamedHomes(uuid).get(id).getWorld();
+					//Gets the description for the home
 					String desc = setHomes.getPlayersNamedHomes(uuid).get(id).getDesc();
 					if(desc != null) {
-						p.sendMessage(ChatColor.DARK_GREEN + id + " - " + desc);
+						p.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world + " - Desc: " + desc);
 					} else {
-						p.sendMessage(ChatColor.DARK_GREEN + id);
+						p.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world + " - Desc: ");
 					}
 				}
 			}
-			
+			p.sendMessage(filler);
 			return true;
-			
-		//Checks if the command sent is /delhome
 		}
 		return false;
 	}
