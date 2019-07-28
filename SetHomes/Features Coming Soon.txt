@@ -1,0 +1,5 @@
+**Suggestions by tabpol95 on dev.bukkit.org**
+1. Add world name to output of /homes
+2. Add blacklist for worlds, i.e: Player cannot set home in nether if nether is in blacklist
+3. Admin manipulation of any players home
+**Suggestion by tablpol95 on dev.bukkit.org**
