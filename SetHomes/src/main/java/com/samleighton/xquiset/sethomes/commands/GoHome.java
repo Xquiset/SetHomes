@@ -7,12 +7,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
 public class GoHome implements CommandExecutor{
-	private final SetHomes setHomes;
+	private final SetHomes pl;
 	
 	public GoHome(SetHomes plugin) {
-		setHomes = plugin;
+		pl = plugin;
 	}
 
 	@Override
@@ -20,22 +21,23 @@ public class GoHome implements CommandExecutor{
 		//Make sure the sender of the command is a player
 		if (!(sender instanceof Player)) {
 			//Sends message to sender of command that they're not a player
-			sender.sendMessage(ChatColor.DARK_RED + "This command is for players only!");
+			ChatUtils.notPlayerError(sender);
 			return false;
 		}
+		
 		if (cmd.getName().equalsIgnoreCase("home")) {
 			Player p = (Player) sender;
 			String uuid = p.getUniqueId().toString();
 			
 			if (args.length < 1) {
 				//If they have no home tell them
-				if (!(setHomes.hasUnknownHomes(uuid))) {
-					p.sendMessage(ChatColor.DARK_RED + "You have no Default Home!");
+				if (!(pl.hasUnknownHomes(uuid))) {
+					ChatUtils.sendError(p, "You have no Default Home!");
 					return true;
 				} else {
 					//Teleport the player to there home and send them a message telling them so
-					p.teleport(setHomes.getPlayersUnnamedHome(uuid));
-					p.sendMessage(ChatColor.GOLD + "You have been teleported home!");
+					p.teleport(pl.getPlayersUnnamedHome(uuid));
+					ChatUtils.sendSuccess(p, "You have been teleported home!");
 					return true;
 				}
 			} else if (args.length > 1) {
@@ -44,14 +46,14 @@ public class GoHome implements CommandExecutor{
 				return false;
 			} else {
 				//Check if they have any named homes or a home with the given name
-				if(!(setHomes.hasNamedHomes(uuid)) || !(setHomes.getPlayersNamedHomes(uuid).containsKey(args[0]))) {
-					p.sendMessage(ChatColor.DARK_RED + "You have no homes by that name!");
+				if(!(pl.hasNamedHomes(uuid)) || !(pl.getPlayersNamedHomes(uuid).containsKey(args[0]))) {
+					ChatUtils.sendError(p, "You have no homes by that name!");
 					return true;
 				}
 				
 				//Teleport the player to their home
-				p.teleport(setHomes.getNamedHomeLocal(uuid, args[0]));
-				p.sendMessage(ChatColor.GOLD + "You have been teleported home!");
+				p.teleport(pl.getNamedHomeLocal(uuid, args[0]));
+				ChatUtils.sendSuccess(p, "You have been teleported home!");
 				return true;
 			}
 		//Checks if the command sent is /homes

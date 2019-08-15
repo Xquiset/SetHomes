@@ -1,17 +1,21 @@
 package com.samleighton.xquiset.sethomes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.samleighton.xquiset.sethomes.commands.Blacklist;
 import com.samleighton.xquiset.sethomes.commands.DeleteHome;
 import com.samleighton.xquiset.sethomes.commands.GoHome;
 import com.samleighton.xquiset.sethomes.commands.ListHomes;
 import com.samleighton.xquiset.sethomes.commands.SetHome;
 import com.samleighton.xquiset.sethomes.commands.Strike;
+import com.samleighton.xquiset.sethomes.configurations.WorldBlacklist;
 import com.samleighton.xquiset.sethomes.eventListeners.EventListener;
 
 //Author: Xquiset
@@ -19,18 +23,20 @@ import com.samleighton.xquiset.sethomes.eventListeners.EventListener;
 public class SetHomes extends JavaPlugin {
 	
 	public FileConfiguration config;
-	//Was public static
+	public WorldBlacklist blacklist = new WorldBlacklist(this);
 	
 	@Override
 	public void onEnable() {
 		//Load the configuration on enable or reload
 		loadConfigurationFile();
+		getBlacklist().reloadConfig();
 		//Initialize the command executors
 		this.getCommand("sethome").setExecutor(new SetHome(this));
 		this.getCommand("homes").setExecutor(new ListHomes(this));
 		this.getCommand("delhome").setExecutor(new DeleteHome(this));
 		this.getCommand("home").setExecutor(new GoHome(this));
 		this.getCommand("strike").setExecutor(new Strike(this));
+		this.getCommand("blacklist").setExecutor(new Blacklist(this));
 		new EventListener(this);
 	}
 
@@ -58,6 +64,14 @@ public class SetHomes extends JavaPlugin {
 		getConfig().options().copyDefaults(true);
 
 		saveConfig();
+		
+		if( !(getBlacklist().getConfig().isSet("blacklisted_worlds"))) {
+			getBlacklist().getConfig().addDefault("blacklisted_worlds", new ArrayList<String>());
+		}
+		
+		getBlacklist().getConfig().options().copyDefaults(true);
+		
+		getBlacklist().save();
 	}
 	
 	/**
@@ -207,5 +221,21 @@ public class SetHomes extends JavaPlugin {
 		String path = "unknownHomes." + uuid;
 		config.set(path, null);
 		saveConfig();
+	}
+	
+	/**
+	 * Used to manipulate the WorldBlacklist configuration file
+	 * @return WorldBlacklist object
+	 */
+	public WorldBlacklist getBlacklist() {
+		return blacklist;
+	}
+	
+	/**
+	 * Used for reading the world names in from the blacklist config
+	 * @return list of World Names
+	 */
+	public List<String> getBlacklistedWorlds(){
+		return getBlacklist().getConfig().getStringList("blacklisted_worlds");
 	}
 }

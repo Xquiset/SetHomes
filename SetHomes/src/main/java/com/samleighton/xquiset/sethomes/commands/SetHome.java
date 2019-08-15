@@ -9,13 +9,14 @@ import org.bukkit.entity.Player;
 
 import com.samleighton.xquiset.sethomes.Home;
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
 public class SetHome implements CommandExecutor{
-	private final SetHomes setHomes;
+	private final SetHomes pl;
 	//private static FileConfiguration config;
 	
 	public SetHome(SetHomes plugin) {
-		setHomes = plugin;
+		pl = plugin;
 		//config = setHomes.getConfig();
 	}
 
@@ -34,32 +35,36 @@ public class SetHome implements CommandExecutor{
 			String uuid = p.getUniqueId().toString();
 			Location home = p.getLocation();
 			
+			if(pl.getBlacklistedWorlds().contains(home.getWorld().getName())) {
+				ChatUtils.sendError(p, "This world does not allow the usage of homes!");
+				return true;
+			}
+			
 			//Create a home at the players location
 			Home playersHome = new Home(home);
 			
 			//No home name provided
 			if(args.length < 1) {
 				//If player has no homes create a new section for their UUID
-				if(!(setHomes.hasUnknownHomes(uuid))) {
-					setHomes.config.createSection("unknownHomes." + uuid);
+				if(!(pl.hasUnknownHomes(uuid))) {
+					pl.config.createSection("unknownHomes." + uuid);
 				}
 				
 				//Save the home
-				setHomes.saveUnknownHome(uuid, playersHome);
+				pl.saveUnknownHome(uuid, playersHome);
 				
-				p.sendMessage(ChatColor.GOLD + "You have set a default home!");
-				
+				ChatUtils.sendSuccess(p, "You have set a default home!");
 				return true;
 			//They have provided a home name and possibly description too
 			} else {
 				if(p.hasPermission("homes.sethome")) {
-					if(!(setHomes.hasNamedHomes(uuid))) {
-						setHomes.config.createSection("allNamedHomes." + uuid);
+					if(!(pl.hasNamedHomes(uuid))) {
+						pl.config.createSection("allNamedHomes." + uuid);
 					}
 					
 					//Check if the player already has a home with the name they gave us
-					if(setHomes.getPlayersNamedHomes(uuid).containsKey(args[0])) {
-						p.sendMessage(ChatColor.DARK_RED + "You already have a home with that name, try a different one!");
+					if(pl.getPlayersNamedHomes(uuid).containsKey(args[0])) {
+						ChatUtils.sendError(p, "You already have a home with that name, try a different one!");
 						return true;
 					}
 					
@@ -76,13 +81,13 @@ public class SetHome implements CommandExecutor{
 						playersHome.setDesc(desc.substring(0, desc.length() - 1));
 					}
 					
-					setHomes.saveNamedHome(uuid, playersHome);
+					pl.saveNamedHome(uuid, playersHome);
 					
 					p.sendMessage(ChatColor.DARK_GREEN + "Your home \'" + playersHome.getHomeName() + "\' has been set!");
 					return true;
 				}
 				//Send player message because they didn't have the proper permissions
-				p.sendMessage(ChatColor.DARK_RED + "You dont have permission to do that!");
+				ChatUtils.permissionError(p);
 				return true;
 			}
 		}

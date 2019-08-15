@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
 public class ListHomes implements CommandExecutor{
 
@@ -25,7 +26,7 @@ public class ListHomes implements CommandExecutor{
 		//Make sure the sender of the command is a player
 		if (!(sender instanceof Player)) {
 			//Sends message to sender of command that they're not a player
-			sender.sendMessage(ChatColor.DARK_RED + "This command is for players only!");
+			ChatUtils.notPlayerError(sender);
 			return false;
 		}
 		
@@ -43,7 +44,7 @@ public class ListHomes implements CommandExecutor{
 					return true;
 				} else {
 					//Send player message because they didn't have the proper permissions
-					p.sendMessage(ChatColor.DARK_RED + "You dont have permission to do that!");
+					ChatUtils.sendError(p, "You dont have permission to do that!");
 					return true;
 				}
 			} else if(args.length == 0){
@@ -52,7 +53,7 @@ public class ListHomes implements CommandExecutor{
 				return true;
 			} else {
 				//Tell the player if they've sent to many arguments with the command
-				p.sendMessage(ChatColor.DARK_RED + "ERROR: Too many arguments!");
+				ChatUtils.sendError(p, "ERROR: Too many arguments");
 				return false;
 			}
 		}
@@ -94,7 +95,7 @@ public class ListHomes implements CommandExecutor{
 		String uuid = p.getUniqueId().toString();
 		String filler = StringUtils.repeat("-", 53);
 		
-		sender.sendMessage(ChatColor.DARK_RED + "Homes for the player - " + p.getName());
+		sender.sendMessage(ChatColor.BOLD + "Homes currently set for the player - " + p.getName());
 		sender.sendMessage(filler);
 		
 		//Tell the player if they have a default home set or not

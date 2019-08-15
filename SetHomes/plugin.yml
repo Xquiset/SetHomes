@@ -1,6 +1,6 @@
 name: SetHomes
 main: com.samleighton.xquiset.sethomes.SetHomes
-version: 1.0
+version: 1.1
 author: Xquiset
 commands:
    home:
@@ -22,6 +22,9 @@ commands:
    strike:
       description: Strike fury into your enemies with your wand.
       usage: /<command>
+   blacklist:
+      description: Blacklist of worlds to disallow home setting in
+      usage: /<command> <Add/Remove> <WorldName>
 permissions:
    homes.*:
       description: Allows all commands from the Homes plugin to be run.
@@ -30,6 +33,9 @@ permissions:
          homes.sethome: true
          homes.strike: true
          homes.gethomes: true
+         homes.blacklist_list: true
+         homes.blacklist_add: true
+         homes.blacklist_remove: true
    homes.strike:
        description: Allows a player to strike.
        default: false
@@ -38,5 +44,14 @@ permissions:
       default: false
    homes.gethomes:
       description: Lists the homes for a specific player
+      default: false
+   homes.blacklist_list:
+      description: Lists the worlds in the blacklist
+      default: false
+   homes.blacklist_add:
+      description: Add a world to the blacklist
+      default: false
+   homes.blacklist_remove:
+      description: Remove worlds from the blacklist
       default: false
       
