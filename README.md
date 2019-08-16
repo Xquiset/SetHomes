@@ -1,5 +1,5 @@
 # SetHomes
-A simple homes plugin that I made for fun, and to get back into Java/Minecraft!
+A simple homes with the ability to create, delete, and teleport to many different homes.
 
 # Installation
 Simply place the downloaded jar from https://dev.bukkit.org/projects/set-homes into your server plugins folder.
