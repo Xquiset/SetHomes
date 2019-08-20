@@ -14,6 +14,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
 public class Strike implements CommandExecutor{
 	@SuppressWarnings("unused")
@@ -34,19 +35,25 @@ public class Strike implements CommandExecutor{
 		
 		if(cmd.getName().equalsIgnoreCase("strike")) {
 			Player p = (Player) sender;
-			PlayerInventory pInvetory = p.getInventory();
-			ItemStack fishingRod = new ItemStack(Material.FISHING_ROD, 1);
-			ItemMeta rodMeta = fishingRod.getItemMeta();
-			List<String> rodLore = new ArrayList<String>();
-			
-			rodLore.add(ChatColor.DARK_RED + "The power of the almighty is in your hands now!");
-			rodMeta.setLore(rodLore);
-			rodMeta.setDisplayName(ChatColor.BLUE + "The Almighty!");
-			rodMeta.setLocalizedName("almighty");
-			
-			fishingRod.setItemMeta(rodMeta);
-			
-			pInvetory.addItem(fishingRod);
+			if(p.hasPermission("homes.strike")) {
+				PlayerInventory pInvetory = p.getInventory();
+				ItemStack fishingRod = new ItemStack(Material.FISHING_ROD, 1);
+				ItemMeta rodMeta = fishingRod.getItemMeta();
+				List<String> rodLore = new ArrayList<String>();
+				
+				rodLore.add(ChatColor.DARK_RED + "The power of the almighty is in your hands now!");
+				rodMeta.setLore(rodLore);
+				rodMeta.setDisplayName(ChatColor.BLUE + "The Almighty!");
+				rodMeta.setLocalizedName("almighty");
+				
+				fishingRod.setItemMeta(rodMeta);
+				
+				pInvetory.addItem(fishingRod);
+				return true;
+			} else {
+				ChatUtils.permissionError(p);
+				return true;
+			}
 		}
 		
 		return false;
