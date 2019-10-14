@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.samleighton.xquiset.sethomes.configurations.Homes;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,8 +23,9 @@ import com.samleighton.xquiset.sethomes.eventListeners.EventListener;
 //Plugin: SetHomes
 public class SetHomes extends JavaPlugin {
 	
-	public FileConfiguration config;
-	public WorldBlacklist blacklist = new WorldBlacklist(this);
+	public FileConfiguration config, homesCfg, blacklistCfg;
+	private WorldBlacklist blacklist = new WorldBlacklist(this);
+	private Homes homes = new Homes(this);
 	
 	@Override
 	public void onEnable() {
@@ -52,26 +54,48 @@ public class SetHomes extends JavaPlugin {
 	 * then we create it with
 	 * preset default paths 
 	 */
-	public void loadConfigurationFile() {
-		
-		config = getConfig();
-		
-		if( !(config.isSet("allNamedHomes") || config.isSet("unknownHomes") ) ) {
+	private void loadConfigurationFile() {
+		/*if( !(config.isSet("allNamedHomes") || config.isSet("unknownHomes") ) ) {
 			config.addDefault("allNamedHomes", new HashMap<String, HashMap<String, Home>>());
 			config.addDefault("unknownHomes", new HashMap<String, Home>());
-		}
-		
-		getConfig().options().copyDefaults(true);
+		}*/
 
-		saveConfig();
-		
-		if( !(getBlacklist().getConfig().isSet("blacklisted_worlds"))) {
-			getBlacklist().getConfig().addDefault("blacklisted_worlds", new ArrayList<String>());
+		//Get the configs
+		homesCfg = getHomes().getConfig();
+		blacklistCfg = getBlacklist().getConfig();
+
+		//Establish blacklist default config path
+		if( !(blacklistCfg.isSet("blacklisted_worlds"))) {
+			blacklistCfg.addDefault("blacklisted_worlds", new ArrayList<String>());
 		}
-		
-		getBlacklist().getConfig().options().copyDefaults(true);
-		
+
+		//Save defaults
+		blacklistCfg.options().copyDefaults(true);
 		getBlacklist().save();
+
+		//Establish homes default paths
+		if(!(homesCfg.isSet("allNamedHomes") || homesCfg.isSet("unknownHomes"))){
+			homesCfg.addDefault("allNamedHomes", new HashMap<String, HashMap<String, Home>>());
+			homesCfg.addDefault("unknownHomes", new HashMap<String, Home>());
+		}
+
+		//Save defaults
+		homesCfg.options().copyDefaults(true);
+		getHomes().save();
+
+		//Copy homes from old config if they were set and delete them from default config
+		config = getConfig();
+		copyHomes(config, getHomes());
+
+		//Setup defaults for config
+		if(!(config.isSet("max-homes"))){
+			//Sets the max homes to unlimited by default
+			config.addDefault("max-homes", -1);
+			config.addDefault("max-homes-msg", "You have reached the maximum amount of saved homes!");
+		}
+
+		config.options().copyDefaults(true);
+		saveConfig();
 	}
 	
 	/**
@@ -84,21 +108,21 @@ public class SetHomes extends JavaPlugin {
 		String homesPath = "allNamedHomes." + uuid;
 		
 		//Loop through the players home list and create a hash map with the home names as a key and home as value
-		for(String id : config.getConfigurationSection(homesPath).getKeys(false)) {
+		for(String id : homesCfg.getConfigurationSection(homesPath).getKeys(false)) {
 			String path = homesPath + "." + id + ".";
-			World world = getServer().getWorld(config.getString(path + ".world"));
-			double x = config.getDouble(path + ".x");
-			double y = config.getDouble(path + ".y");
-			double z = config.getDouble(path + ".z");
-			float pitch = Float.parseFloat(config.getString(path + ".pitch"));
-			float yaw = Float.parseFloat(config.getString(path + ".yaw"));
+			World world = getServer().getWorld(homesCfg.getString(path + ".world"));
+			double x = homesCfg.getDouble(path + ".x");
+			double y = homesCfg.getDouble(path + ".y");
+			double z = homesCfg.getDouble(path + ".z");
+			float pitch = Float.parseFloat(homesCfg.getString(path + ".pitch"));
+			float yaw = Float.parseFloat(homesCfg.getString(path + ".yaw"));
 			
 			Location home = new Location(world, x, y, z, yaw, pitch);
 			Home h = new Home(home);
 			
 			//Check if there is a desc set
-			if(config.isSet(path + ".desc")) {
-				h.setDesc(config.getString(path + ".desc"));
+			if(homesCfg.isSet(path + ".desc")) {
+				h.setDesc(homesCfg.getString(path + ".desc"));
 			}
 			
 			playersNamedHomes.put(id, h);
@@ -127,29 +151,26 @@ public class SetHomes extends JavaPlugin {
 	 * @return true || false
 	 */
 	public boolean hasNamedHomes(String uuid) {
-		if(config.contains("allNamedHomes." + uuid) && config.isSet("allNamedHomes." + uuid)) {
-			return true;
-		}
-		return false;
+		return homesCfg.contains("allNamedHomes." + uuid) && homesCfg.isSet("allNamedHomes." + uuid);
 	}
 	
 	/**
 	 * 
 	 * @param uuid of the player
-	 * @param homeName name to give the new home
-	 * @param homeDesc description to add for the home
+	 * @param uuid player to save home for
+	 * @param home object of the home object to save
 	 */
 	public void saveNamedHome(String uuid, Home home) {
 		String path = "allNamedHomes." + uuid + "." + home.getHomeName();
-		config.set(path + ".world", home.getWorld());
-		config.set(path + ".x", home.getX());
-		config.set(path + ".y", home.getY());
-		config.set(path + ".z", home.getZ());
-		config.set(path + ".pitch", home.getPitch());
-		config.set(path + ".yaw", home.getYaw());
-		config.set(path + ".desc", home.getDesc());
+		homesCfg.set(path + ".world", home.getWorld());
+		homesCfg.set(path + ".x", home.getX());
+		homesCfg.set(path + ".y", home.getY());
+		homesCfg.set(path + ".z", home.getZ());
+		homesCfg.set(path + ".pitch", home.getPitch());
+		homesCfg.set(path + ".yaw", home.getYaw());
+		homesCfg.set(path + ".desc", home.getDesc());
 		
-		saveConfig();
+		getHomes().save();
 	}
 	
 	/**
@@ -159,8 +180,8 @@ public class SetHomes extends JavaPlugin {
 	 */
 	public void deleteNamedHome(String uuid, String homeName) {
 		String path = "allNamedHomes." + uuid + "." + homeName;
-		config.set(path, null);
-		saveConfig();
+		homesCfg.set(path, null);
+		getHomes().save();
 	}
 	
 	/**
@@ -171,12 +192,12 @@ public class SetHomes extends JavaPlugin {
 	public Location getPlayersUnnamedHome(String uuid) {
 		//Grabs all the data from the configuration file
 		String path = "unknownHomes." + uuid;
-		World world = getServer().getWorld(config.getString(path + ".world"));
-		double x = config.getDouble(path + ".x");
-		double y = config.getDouble(path + ".y");
-		double z = config.getDouble(path + ".z");
-		float pitch = Float.parseFloat(config.getString(path + ".pitch"));
-		float yaw = Float.parseFloat(config.getString(path + ".yaw"));
+		World world = getServer().getWorld(homesCfg.getString(path + ".world"));
+		double x = homesCfg.getDouble(path + ".x");
+		double y = homesCfg.getDouble(path + ".y");
+		double z = homesCfg.getDouble(path + ".z");
+		float pitch = Float.parseFloat(homesCfg.getString(path + ".pitch"));
+		float yaw = Float.parseFloat(homesCfg.getString(path + ".yaw"));
 		
 		Location home = new Location(world, x, y, z, yaw, pitch);
 		
@@ -189,10 +210,7 @@ public class SetHomes extends JavaPlugin {
 	 * @return true || false
 	 */
 	public boolean hasUnknownHomes(String uuid) {
-		if(config.contains("unknownHomes." + uuid)){
-			return true;
-		}
-		return false;
+		return homesCfg.contains("unknownHomes." + uuid);
 	}
 	
 	/**
@@ -203,14 +221,14 @@ public class SetHomes extends JavaPlugin {
 	public void saveUnknownHome(String uuid, Home home) {
 		//Saves the variables to construct a home location to the configuration file
 		String path = "unknownHomes." + uuid;
-		config.set(path + ".world", home.getWorld());
-		config.set(path + ".x", home.getX());
-		config.set(path + ".y", home.getY());
-		config.set(path + ".z", home.getZ());
-		config.set(path + ".pitch", home.getPitch());
-		config.set(path + ".yaw", home.getYaw());
+		homesCfg.set(path + ".world", home.getWorld());
+		homesCfg.set(path + ".x", home.getX());
+		homesCfg.set(path + ".y", home.getY());
+		homesCfg.set(path + ".z", home.getZ());
+		homesCfg.set(path + ".pitch", home.getPitch());
+		homesCfg.set(path + ".yaw", home.getYaw());
 		
-		saveConfig();
+		getHomes().save();
 	}
 	
 	/**
@@ -219,8 +237,8 @@ public class SetHomes extends JavaPlugin {
 	public void deleteUnknownHome(String uuid) {
 		//Set the path to the players id as null
 		String path = "unknownHomes." + uuid;
-		config.set(path, null);
-		saveConfig();
+		homesCfg.set(path, null);
+		getHomes().save();
 	}
 	
 	/**
@@ -237,5 +255,38 @@ public class SetHomes extends JavaPlugin {
 	 */
 	public List<String> getBlacklistedWorlds(){
 		return getBlacklist().getConfig().getStringList("blacklisted_worlds");
+	}
+
+	/**
+	 * Used to get the homes
+	 * @return Homes object
+	 */
+	public Homes getHomes() {
+		return homes;
+	}
+
+	/**
+	 * Used to copy homes from default config into new homes config
+	 * @param config Orginal old configuration
+	 * @param homeConfig New homes configuration
+	 */
+	private void copyHomes(FileConfiguration config, Homes homeConfig){
+		if(config.contains("allNamedHomes")){
+			if(config.isSet("allNamedHomes")){
+				homeConfig.getConfig().set("allNamedHomes", config.get("allNamedHomes"));
+				config.set("allNamedHomes", null);
+				homeConfig.save();
+				saveConfig();
+			}
+		}
+
+		if(config.contains("unknownHomes")){
+			if(config.isSet("unknownHomes")){
+				homeConfig.getConfig().set("unknownHomes", config.get("unknownHomes"));
+				config.set("unknownHomes", null);
+				homeConfig.save();
+				saveConfig();
+			}
+		}
 	}
 }

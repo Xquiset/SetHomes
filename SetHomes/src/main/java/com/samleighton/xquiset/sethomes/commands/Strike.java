@@ -17,14 +17,12 @@ import com.samleighton.xquiset.sethomes.SetHomes;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
 public class Strike implements CommandExecutor{
-	@SuppressWarnings("unused")
 	private final SetHomes setHomes;
 	
 	public Strike(SetHomes plugin) {
 		this.setHomes = plugin;
 	}
 
-	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		//Make sure the sender of the command is a player
 		if (!(sender instanceof Player)) {

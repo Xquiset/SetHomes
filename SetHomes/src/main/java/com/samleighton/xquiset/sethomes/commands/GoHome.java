@@ -16,7 +16,6 @@ public class GoHome implements CommandExecutor{
 		pl = plugin;
 	}
 
-	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		//Make sure the sender of the command is a player
 		if (!(sender instanceof Player)) {

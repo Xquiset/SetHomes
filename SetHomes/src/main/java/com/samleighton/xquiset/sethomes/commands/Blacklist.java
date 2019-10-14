@@ -17,13 +17,12 @@ import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
 public class Blacklist implements CommandExecutor{
 	
-	private SetHomes pl;
+	private final SetHomes pl;
 	
 	public Blacklist(SetHomes plugin) {
 		this.pl = plugin;
 	}
 
-	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		//Make sure the sender of the command is a player
 		if (!(sender instanceof Player)) {

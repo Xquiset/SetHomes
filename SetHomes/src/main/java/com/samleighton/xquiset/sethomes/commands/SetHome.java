@@ -13,14 +13,13 @@ import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
 public class SetHome implements CommandExecutor{
 	private final SetHomes pl;
-	//private static FileConfiguration config;
+	private int maxHomes;
 	
 	public SetHome(SetHomes plugin) {
 		pl = plugin;
-		//config = setHomes.getConfig();
+		maxHomes = pl.config.getInt("max-homes");
 	}
 
-	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		//Make sure the sender of the command is a player
 		if (!(sender instanceof Player)) {
@@ -47,7 +46,7 @@ public class SetHome implements CommandExecutor{
 			if(args.length < 1) {
 				//If player has no homes create a new section for their UUID
 				if(!(pl.hasUnknownHomes(uuid))) {
-					pl.config.createSection("unknownHomes." + uuid);
+					pl.getHomes().getConfig().createSection("unknownHomes." + uuid);
 				}
 				
 				//Save the home
@@ -58,8 +57,15 @@ public class SetHome implements CommandExecutor{
 			//They have provided a home name and possibly description too
 			} else {
 				if(p.hasPermission("homes.sethome")) {
+					//If player is not in config create a new section for them
 					if(!(pl.hasNamedHomes(uuid))) {
-						pl.config.createSection("allNamedHomes." + uuid);
+						pl.getHomes().getConfig().createSection("allNamedHomes." + uuid);
+					}
+
+					//Check if players amount of homes vs the config max homes allowed
+					if(pl.getPlayersNamedHomes(uuid).size() >= maxHomes && maxHomes != -1){
+						ChatUtils.sendError(p, pl.config.getString("max-homes-msg"));
+						return true;
 					}
 					
 					//Check if the player already has a home with the name they gave us
@@ -77,7 +83,7 @@ public class SetHome implements CommandExecutor{
 						desc += args[i] + " ";
 					}
 					
-					if(desc != "") {
+					if(!desc.equals("")) {
 						playersHome.setDesc(desc.substring(0, desc.length() - 1));
 					}
 					
