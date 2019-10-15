@@ -44,23 +44,14 @@ public class SetHome implements CommandExecutor{
 			
 			//No home name provided
 			if(args.length < 1) {
-				//If player has no homes create a new section for their UUID
-				if(!(pl.hasUnknownHomes(uuid))) {
-					pl.getHomes().getConfig().createSection("unknownHomes." + uuid);
-				}
-				
 				//Save the home
 				pl.saveUnknownHome(uuid, playersHome);
-				
+
 				ChatUtils.sendSuccess(p, "You have set a default home!");
 				return true;
 			//They have provided a home name and possibly description too
 			} else {
 				if(p.hasPermission("homes.sethome")) {
-					//If player is not in config create a new section for them
-					if(!(pl.hasNamedHomes(uuid))) {
-						pl.getHomes().getConfig().createSection("allNamedHomes." + uuid);
-					}
 
 					//Check if players amount of homes vs the config max homes allowed
 					if(pl.getPlayersNamedHomes(uuid).size() >= maxHomes && maxHomes != -1){
@@ -86,9 +77,10 @@ public class SetHome implements CommandExecutor{
 					if(!desc.equals("")) {
 						playersHome.setDesc(desc.substring(0, desc.length() - 1));
 					}
-					
+
+					//Save the new home
 					pl.saveNamedHome(uuid, playersHome);
-					
+
 					p.sendMessage(ChatColor.DARK_GREEN + "Your home \'" + playersHome.getHomeName() + "\' has been set!");
 					return true;
 				}
