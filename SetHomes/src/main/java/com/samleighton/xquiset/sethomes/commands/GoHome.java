@@ -28,6 +28,7 @@ public class GoHome implements CommandExecutor, Listener {
     private Map<String, Long> cooldownList = new HashMap<String, Long>();
     private boolean cancelOnMove;
     private Location locale = null;
+    private Player p;
 
     public GoHome(SetHomes plugin) {
         pl = plugin;
@@ -45,7 +46,7 @@ public class GoHome implements CommandExecutor, Listener {
         }
 
         if (cmd.getName().equalsIgnoreCase("home")) {
-            final Player p = (Player) sender;
+            p = (Player) sender;
             final String uuid = p.getUniqueId().toString();
 
             //If cooldown is active then check to see if player is in cooldown list
@@ -102,7 +103,7 @@ public class GoHome implements CommandExecutor, Listener {
                                 p.teleport(pl.getPlayersUnnamedHome(uuid));
                                 cooldownList.put(uuid, System.currentTimeMillis());
                             }else{
-                                p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
+                                p.sendTitle(null, ChatColor.GOLD + "Teleporting in " + delay + "...", 0, 20, 0);
                                 delay--;
                             }
                         }
@@ -153,12 +154,14 @@ public class GoHome implements CommandExecutor, Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e){
-        for (BukkitTask task : Bukkit.getScheduler().getPendingTasks()) {
-            if(task.getTaskId() == taskId){
-                if(e.getPlayer().getLocation().getX() != locale.getX() || e.getPlayer().getLocation().getY() != locale.getY()){
-                    if (cancelOnMove && !e.getPlayer().hasPermission("homes.config_bypass")) {
-                        pl.cancelTask(taskId);
-                        ChatUtils.sendInfo(e.getPlayer(), pl.getConfig().getString("tp-cancelOnMove-msg"));
+        if(e.getPlayer() == p){
+            for (BukkitTask task : Bukkit.getScheduler().getPendingTasks()) {
+                if(task.getTaskId() == taskId){
+                    if(e.getPlayer().getLocation().getX() != locale.getX() || e.getPlayer().getLocation().getY() != locale.getY()){
+                        if (cancelOnMove && !e.getPlayer().hasPermission("homes.config_bypass")) {
+                            pl.cancelTask(taskId);
+                            ChatUtils.sendInfo(e.getPlayer(), pl.getConfig().getString("tp-cancelOnMove-msg"));
+                        }
                     }
                 }
             }
