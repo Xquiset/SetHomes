@@ -1,5 +1,4 @@
 **Suggestions by tabpol95 on dev.bukkit.org**
 1. Admin manipulation of any players home
 2. Add the ability to set the time before the /home command can be used again.
-3. Edit the max number of homes a player can set
 **Suggestion by tablpol95 on dev.bukkit.org**
