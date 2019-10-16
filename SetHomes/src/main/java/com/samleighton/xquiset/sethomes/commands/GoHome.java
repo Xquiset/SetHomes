@@ -103,7 +103,7 @@ public class GoHome implements CommandExecutor, Listener {
                                 p.teleport(pl.getPlayersUnnamedHome(uuid));
                                 cooldownList.put(uuid, System.currentTimeMillis());
                             }else{
-                                p.sendTitle(null, ChatColor.GOLD + "Teleporting in " + delay + "...", 0, 20, 0);
+                                p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
                                 delay--;
                             }
                         }
