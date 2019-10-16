@@ -1,5 +1,5 @@
 # SetHomes
-A simple homes with the ability to create, delete, and teleport to many different homes.
+A simple homes plugin with the ability to create, delete, and teleport to many different homes. Have the ability to control a blacklist of worlds in which players will be restricted from setting homes. Using the config you can control setting such as a maximum number of homes, teleport cooldown, teleport delay, and their respective messages that get display to the user.
 
 # Installation
 Simply place the downloaded jar from https://dev.bukkit.org/projects/set-homes into your server plugins folder.
@@ -20,3 +20,4 @@ Simply place the downloaded jar from https://dev.bukkit.org/projects/set-homes i
 - **homes.blacklist_list** - Give the ability to list worlds currently in the blacklist
 - **homes.blacklist_add** - Give the ability to add worlds to the blacklist
 - **homes.blacklist_remove** - Give the ability to remove worlds from the blacklist
+- **homes.config_bypass** - A player given this permission can set homes in blacklisted worlds, and doesn't have to wait for cooldown or teleport delays. They will also be able to exceed the max home limit.
