@@ -1,10 +1,12 @@
 package com.samleighton.xquiset.sethomes.commands;
 
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,15 +36,20 @@ public class ListHomes implements CommandExecutor{
 			
 			if(args.length == 1) {
 				if(p.hasPermission("homes.gethomes")) {
-					for(Player player : Bukkit.getOnlinePlayers()) {
-						if(player.getName().equalsIgnoreCase(args[0])) {
-							listHomes(player, p);
-						}
+					//Create a offline player for the name they passed
+					OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+					//Check to make sure the player has actually joined the server
+					if(offlinePlayer.hasPlayedBefore()){
+						UUID uuid = offlinePlayer.getUniqueId();
+						listHomes(uuid, p);
+					}else{
+						ChatUtils.sendError(p, "That user has never player here before!");
+						return true;
 					}
 					return true;
 				} else {
 					//Send player message because they didn't have the proper permissions
-					ChatUtils.sendError(p, "You dont have permission to do that!");
+					ChatUtils.permissionError(p);
 					return true;
 				}
 			} else if(args.length == 0){
@@ -51,7 +58,7 @@ public class ListHomes implements CommandExecutor{
 				return true;
 			} else {
 				//Tell the player if they've sent to many arguments with the command
-				ChatUtils.sendError(p, "ERROR: Too many arguments");
+				ChatUtils.tooManyArgs(p);
 				return false;
 			}
 		}
@@ -82,7 +89,7 @@ public class ListHomes implements CommandExecutor{
 				if(desc != null) {
 					p.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world + " - Desc: " + desc);
 				} else {
-					p.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world + " - Desc: No description");
+					p.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world);
 				}
 			}
 		}
@@ -90,11 +97,11 @@ public class ListHomes implements CommandExecutor{
 	}
 	
 	//List homes for one player to another
-	private void listHomes(Player p, Player sender) {
-		String uuid = p.getUniqueId().toString();
+	private void listHomes(UUID playerUUID, Player sender) {
+		String uuid = playerUUID.toString();
 		String filler = StringUtils.repeat("-", 53);
 		
-		sender.sendMessage(ChatColor.BOLD + "Homes currently set for the player - " + p.getName());
+		sender.sendMessage(ChatColor.BOLD + "Homes currently set for the player - " + Bukkit.getOfflinePlayer(playerUUID).getName());
 		sender.sendMessage(filler);
 		
 		//Tell the player if they have a default home set or not
@@ -115,7 +122,7 @@ public class ListHomes implements CommandExecutor{
 				if(desc != null) {
 					sender.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world + " - Desc: " + desc);
 				} else {
-					sender.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world + " - Desc: ");
+					sender.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world);
 				}
 			}
 		}

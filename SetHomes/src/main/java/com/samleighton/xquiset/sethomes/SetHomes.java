@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.samleighton.xquiset.sethomes.configurations.Homes;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -82,10 +83,11 @@ public class SetHomes extends JavaPlugin {
 		copyHomes(config, getHomes());
 
 		//Setup defaults for config
-		if(!(config.isSet("max-homes"))){
+		if(!(config.isSet("max-homes")) || !(config.isSet("max-homes-msg")) || !(config.isSet("tp-delay"))){
 			//Sets the max homes to unlimited by default
 			config.addDefault("max-homes", -1);
 			config.addDefault("max-homes-msg", "You have reached the maximum amount of saved homes!");
+			config.addDefault("tp-delay", 3);
 		}
 
 		config.options().copyDefaults(true);
@@ -291,5 +293,13 @@ public class SetHomes extends JavaPlugin {
 				saveConfig();
 			}
 		}
+	}
+
+	/**
+	 * Used to cancel a bukkit runnable task
+	 * @param taskId
+	 */
+	public void cancelTask(int taskId){
+		Bukkit.getScheduler().cancelTask(taskId);
 	}
 }
