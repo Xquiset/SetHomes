@@ -21,3 +21,28 @@ Simply place the downloaded jar from https://dev.bukkit.org/projects/set-homes i
 - **homes.blacklist_add** - Give the ability to add worlds to the blacklist
 - **homes.blacklist_remove** - Give the ability to remove worlds from the blacklist
 - **homes.config_bypass** - A player given this permission can set homes in blacklisted worlds, and doesn't have to wait for cooldown or teleport delays. They will also be able to exceed the max home limit.
+
+# Default Config
+```yaml
+# --------------------------
+# 	SetHomes Config	
+# --------------------------
+# Messages: 
+# 	You can use chat colors in messages with this symbol §.
+# 	I.E: §b will change any text after it to an aqua blue color.
+# 	Color codes can be found here https://www.digminecraft.com/lists/color_list_pc.php
+# Time: 
+# 	Any time value is based in seconds.
+# Things to Note: 
+# 	Set any integer option to 0 for it to be ignored.
+# 	The max-homes does not include the default un-named home.
+# 	Use %s as the seconds variable in the cooldown message.
+
+max-homes: 0
+max-homes-msg: §4You have reached the maximum amount of saved homes!
+tp-delay: 3
+tp-cooldown: 0
+tp-cancelOnMove: false
+tp-cancelOnMove-msg: §4Movement detected! Teleporting has been cancelled!
+tp-cooldown-msg: §4You must wait another %s second(s) before teleporting!
+```
