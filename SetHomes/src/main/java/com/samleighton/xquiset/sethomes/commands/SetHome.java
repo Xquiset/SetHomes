@@ -54,7 +54,7 @@ public class SetHome implements CommandExecutor{
 				if(p.hasPermission("homes.sethome")) {
 
 					//Check if players amount of homes vs the config max homes allowed
-					if(pl.getPlayersNamedHomes(uuid).size() >= maxHomes && maxHomes != 0){
+					if((pl.getPlayersNamedHomes(uuid).size() >= maxHomes && maxHomes != 0) && !p.hasPermission("homes.config_bypass")){
 						ChatUtils.sendInfo(p, pl.config.getString("max-homes-msg"));
 						return true;
 					}

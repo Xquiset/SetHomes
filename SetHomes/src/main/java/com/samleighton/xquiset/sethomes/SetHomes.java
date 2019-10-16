@@ -28,7 +28,8 @@ public class SetHomes extends JavaPlugin {
             "You can use chat colors in messages with this symbol §.\n" +
             "I.E: §b will change any text after it to an aqua blue color\n" +
             "Color codes can be found here https://www.digminecraft.com/lists/color_list_pc.php\n" +
-            "Any time value is based in seconds.\n";
+            "Any time value is based in seconds.\n" +
+            "The max-homes does not include the default un-named home\n";
 
     @Override
     public void onEnable() {

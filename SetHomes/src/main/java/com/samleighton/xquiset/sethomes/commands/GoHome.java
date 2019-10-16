@@ -87,7 +87,7 @@ public class GoHome implements CommandExecutor{
 				return false;
 			} else {
 				//Teleport the player to their home and send them a message telling them so
-				if(pl.getConfig().getInt("tp-delay") > 0){
+				if(pl.getConfig().getInt("tp-delay") > 0 && !p.hasPermission("homes.config_bypass")){
 					taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
 						int delay = pl.getConfig().getInt("tp-delay");
 						public void run() {
@@ -123,7 +123,7 @@ public class GoHome implements CommandExecutor{
 			}
 			final String homeName = args[0];
 			//Teleport the player to there home and send them a message telling them so
-			if(pl.getConfig().getInt("tp-delay") > 0){
+			if(pl.getConfig().getInt("tp-delay") > 0 && !p.hasPermission("homes.config_bypass")){
 				taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
 					int delay = pl.getConfig().getInt("tp-delay");
 					public void run() {
