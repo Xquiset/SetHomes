@@ -29,7 +29,8 @@ public class SetHomes extends JavaPlugin {
             "I.E: §b will change any text after it to an aqua blue color\n" +
             "Color codes can be found here https://www.digminecraft.com/lists/color_list_pc.php\n" +
             "Any time value is based in seconds.\n" +
-            "The max-homes does not include the default un-named home\n";
+            "The max-homes does not include the default un-named home\n" +
+            "Use %s as the seconds variable in the cooldown message\n";
 
     @Override
     public void onEnable() {
@@ -88,7 +89,7 @@ public class SetHomes extends JavaPlugin {
         //Setup defaults for config
         if (!(config.isSet("max-homes") && config.isSet("max-homes-msg") && config.isSet("tp-delay")
                 && config.isSet("tp-cooldown") && config.isSet("tp-cancelOnMove")
-                && config.isSet("tp-cancelOnMove-msg"))) {
+                && config.isSet("tp-cancelOnMove-msg") && config.isSet("tp-cooldown-msg"))) {
             //Sets the max homes to unlimited by default
             if(!config.isSet("max-homes")){
                 config.set("max-homes", 0);
@@ -107,6 +108,9 @@ public class SetHomes extends JavaPlugin {
             }
             if(!config.isSet("tp-cancelOnMove-msg")){
                 config.set("tp-cancelOnMove-msg", "§4Movement detected! Teleporting has been cancelled!");
+            }
+            if(!config.isSet("tp-cooldown-msg")){
+                config.set("tp-cooldown-msg", "§4You must wait another %s second(s) before teleporting!");
             }
         }
 
@@ -314,7 +318,6 @@ public class SetHomes extends JavaPlugin {
 
     /**
      * Used to cancel a bukkit runnable task
-     *
      * @param taskId
      */
     public void cancelTask(int taskId) {
