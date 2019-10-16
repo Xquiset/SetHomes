@@ -97,13 +97,14 @@ public class GoHome implements CommandExecutor, Listener {
                     taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                         int delay = pl.getConfig().getInt("tp-delay");
                         public void run() {
-                            p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
                             if (delay == 0) {
                                 pl.cancelTask(taskId);
                                 p.teleport(pl.getPlayersUnnamedHome(uuid));
                                 cooldownList.put(uuid, System.currentTimeMillis());
+                            }else{
+                                p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
+                                delay--;
                             }
-                            delay--;
                         }
                     }, 0L, 20L);
                 } else {
@@ -129,14 +130,15 @@ public class GoHome implements CommandExecutor, Listener {
                 taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                     int delay = pl.getConfig().getInt("tp-delay");
                     public void run() {
-                        p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 5, 5, 5);
                         if (delay == 0) {
                             pl.cancelTask(taskId);
                             //Teleport the player to their home
                             p.teleport(pl.getNamedHomeLocal(uuid, homeName));
                             cooldownList.put(uuid, System.currentTimeMillis());
+                        }else{
+                            p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 5, 5, 5);
+                            delay--;
                         }
-                        delay--;
                     }
                 }, 0L, 20L);
             } else {

@@ -34,7 +34,7 @@ public class SetHome implements CommandExecutor{
 			String uuid = p.getUniqueId().toString();
 			Location home = p.getLocation();
 			
-			if(pl.getBlacklistedWorlds().contains(home.getWorld().getName())) {
+			if(pl.getBlacklistedWorlds().contains(home.getWorld().getName()) && !p.hasPermission("homes.config_bypass")) {
 				ChatUtils.sendError(p, "This world does not allow the usage of homes!");
 				return true;
 			}

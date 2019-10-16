@@ -23,14 +23,14 @@ public class SetHomes extends JavaPlugin {
     private WorldBlacklist blacklist = new WorldBlacklist(this);
     private Homes homes = new Homes(this);
     private String configHeader =
-            StringUtils.repeat("-", 20) + "\n\tSetHomes Config\t\n" + StringUtils.repeat("-", 20) + "\n" +
-            "Set any integer option to 0 for it to be ignored.\n" +
-            "You can use chat colors in messages with this symbol §.\n" +
-            "I.E: §b will change any text after it to an aqua blue color\n" +
-            "Color codes can be found here https://www.digminecraft.com/lists/color_list_pc.php\n" +
-            "Any time value is based in seconds.\n" +
-            "The max-homes does not include the default un-named home\n" +
-            "Use %s as the seconds variable in the cooldown message\n";
+            StringUtils.repeat("-", 26) + "\n\tSetHomes Config\t\n" + StringUtils.repeat("-", 26) + "\n" +
+            "Messages: \n\tYou can use chat colors in messages with this symbol §.\n" +
+            "\tI.E: §b will change any text after it to an aqua blue color.\n" +
+            "\tColor codes can be found here https://www.digminecraft.com/lists/color_list_pc.php\n" +
+            "Time: \n\tAny time value is based in seconds.\n" +
+            "Things to Note: \n\tSet any integer option to 0 for it to be ignored.\n" +
+            "\tThe max-homes does not include the default un-named home.\n" +
+            "\tUse %s as the seconds variable in the cooldown message.\n";
 
     @Override
     public void onEnable() {
@@ -201,9 +201,9 @@ public class SetHomes extends JavaPlugin {
      */
     public void deleteNamedHome(String uuid, String homeName) {
         String path = "allNamedHomes." + uuid + "." + homeName;
-        homesCfg = getHomes().getConfig();
-        homesCfg.set(path, null);
+        getHomes().getConfig().set(path, null);
         getHomes().save();
+        getHomes().reloadConfig();
     }
 
     /**
@@ -258,9 +258,9 @@ public class SetHomes extends JavaPlugin {
     public void deleteUnknownHome(String uuid) {
         //Set the path to the players id as null
         String path = "unknownHomes." + uuid;
-        homesCfg = getHomes().getConfig();
-        homesCfg.set(path, null);
+        getHomes().getConfig().set(path, null);
         getHomes().save();
+        getHomes().reloadConfig();
     }
 
     /**
