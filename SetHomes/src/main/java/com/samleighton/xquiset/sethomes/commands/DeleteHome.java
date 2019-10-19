@@ -1,5 +1,8 @@
 package com.samleighton.xquiset.sethomes.commands;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,9 +25,11 @@ public class DeleteHome implements CommandExecutor{
 			ChatUtils.notPlayerError(sender);
 			return false;
 		}
-		
+
+		//The player that sent the command
+		Player p = (Player) sender;
 		if(cmd.getName().equalsIgnoreCase("delhome")) {
-			Player p = (Player) sender;
+			//The uuid of the player that sent the command
 			String uuid = p.getUniqueId().toString();
 			
 			//Check if they're trying to delete the default home or a named home base on parameters entered
@@ -55,6 +60,55 @@ public class DeleteHome implements CommandExecutor{
 				//Tell the player which home they have deleted
 				ChatUtils.sendSuccess(p, "You have deleted the home: " + args[0]);
 				return true;
+			}
+		}
+
+		if(cmd.getName().equalsIgnoreCase("delhome-of")){
+			//Check for proper permissions
+			if(!p.hasPermission("homes.delhome-of")){
+				ChatUtils.permissionError(p);
+				return false;
+			}
+
+			//Check for the correct range of argument numbers
+			if(args.length < 1 || args.length > 2){
+				ChatUtils.sendError(p, "ERROR: Incorrect number of arguments!");
+				return false;
+			}
+
+			//Create new offline player for the player name they entered
+			OfflinePlayer targetP = Bukkit.getServer().getOfflinePlayer(args[0]);
+			//Check to be sure the player has played on the server before
+			if(!targetP.hasPlayedBefore()){
+				ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has never played here before!");
+				return false;
+			}
+
+			String uuid = targetP.getUniqueId().toString();
+			//If only player name given try deleting the default home
+			if(args.length == 1){
+				//Check to see if the player has a default home set before we try to delete it
+				if(!pl.hasUnknownHomes(uuid)){
+					ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has no default home!");
+					return false;
+				}else{
+					//Perform deletion of the un-named home
+					pl.deleteUnknownHome(uuid);
+					ChatUtils.sendSuccess(p, "You have deleted the default home for player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + "!");
+					return true;
+				}
+			}else{
+				//Attempt to find a named home with the named passed to us
+				String homeName = args[0];
+				if(!(pl.hasNamedHomes(uuid)) || !(pl.getPlayersNamedHomes(uuid).containsKey(homeName))){
+					ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has no homes by that name!");
+					return false;
+				}else{
+					//Perform deletion of the named home
+					pl.deleteNamedHome(uuid, homeName);
+					ChatUtils.sendSuccess(p, "You have deleted the \'" + homeName + "\' home for player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + "!");
+					return true;
+				}
 			}
 		}
 		return false;

@@ -1,12 +1,15 @@
 name: SetHomes
 main: com.samleighton.xquiset.sethomes.SetHomes
-version: '1.2.1'
+version: '1.2.2'
 author: Xquiset
 commands:
    home:
       description: Teleports a player to their home.
       usage: /<command> <HomeName>
       aliases: h
+   home-of:
+      description: Teleports the player sending the command to any players home. The default home name is 'unnamed_home'.
+      usage: /<command> <PlayerName> <HomeName>
    homes:
       description: Lists all of a players homes.
       usage: /<command> <player>
@@ -19,6 +22,9 @@ commands:
       description: Deletes a home from the list of players homes.
       usage: /<command> <HomeName>
       aliases: dh
+   delhome-of:
+      description: Gives a player the ability to delete a home from the list of any players home.
+      usage: /<command> <PlayerName> <HomeName>
    strike:
       description: Strike fury into your enemies with your wand.
       usage: /<command>
@@ -37,6 +43,8 @@ permissions:
          homes.blacklist_list: true
          homes.blacklist_add: true
          homes.blacklist_remove: true
+         homes.home-of: true
+         homes.delhome-of: true
    homes.strike:
        description: Allows a player to strike.
        default: false
@@ -57,5 +65,11 @@ permissions:
       default: false
    homes.config_bypass:
       description: Allows the player with this permission to by config restrictions
+      default: false
+   homes.home-of:
+      description: Allows the player to teleport to other players homes.
+      default: false
+   homes.delhome-of:
+      description: Allows the player to delete other players saved homes.
       default: false
       

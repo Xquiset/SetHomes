@@ -37,12 +37,7 @@ public class SetHomes extends JavaPlugin {
         //Load the configuration files on enable or reload
         loadConfigurationFiles();
         //Initialize the command executors
-        this.getCommand("sethome").setExecutor(new SetHome(this));
-        this.getCommand("homes").setExecutor(new ListHomes(this));
-        this.getCommand("delhome").setExecutor(new DeleteHome(this));
-        this.getCommand("home").setExecutor(new GoHome(this));
-        this.getCommand("strike").setExecutor(new Strike(this));
-        this.getCommand("blacklist").setExecutor(new Blacklist(this));
+        registerCommands();
         new EventListener(this);
     }
 
@@ -120,6 +115,22 @@ public class SetHomes extends JavaPlugin {
 
         getHomes().reloadConfig();
         getBlacklist().reloadConfig();
+    }
+
+    /**
+     * Registers the command classes
+     * to handle the execution of these
+     * commands
+     */
+    public void registerCommands(){
+        this.getCommand("sethome").setExecutor(new SetHome(this));
+        this.getCommand("homes").setExecutor(new ListHomes(this));
+        this.getCommand("delhome").setExecutor(new DeleteHome(this));
+        this.getCommand("home").setExecutor(new GoHome(this));
+        this.getCommand("strike").setExecutor(new Strike(this));
+        this.getCommand("blacklist").setExecutor(new Blacklist(this));
+        this.getCommand("home-of").setExecutor(new GoHome(this));
+        this.getCommand("delhome-of").setExecutor(new DeleteHome(this));
     }
 
     /**
