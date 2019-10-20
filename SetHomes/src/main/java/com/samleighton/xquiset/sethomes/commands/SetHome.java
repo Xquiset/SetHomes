@@ -12,6 +12,7 @@ import com.samleighton.xquiset.sethomes.SetHomes;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class SetHome implements CommandExecutor{
 	private final SetHomes pl;
@@ -61,14 +62,11 @@ public class SetHome implements CommandExecutor{
 							ChatUtils.sendInfo(p, pl.config.getString("max-homes-msg"));
 							return true;
 						}
-					}else{
-						pl.getConfig().set("allNamedHomes."+uuid, new HashMap<String, Home>());
-					}
-					
-					//Check if the player already has a home with the name they gave us
-					if(pl.getPlayersNamedHomes(uuid).containsKey(args[0])) {
-						ChatUtils.sendError(p, "You already have a home with that name, try a different one!");
-						return true;
+						//Check if the player already has a home with the name they gave us
+						if(pl.getPlayersNamedHomes(uuid).containsKey(args[0])) {
+							ChatUtils.sendError(p, "You already have a home with that name, try a different one!");
+							return true;
+						}
 					}
 					
 					//Set the home name to the given name
