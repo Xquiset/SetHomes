@@ -11,6 +11,8 @@ import com.samleighton.xquiset.sethomes.Home;
 import com.samleighton.xquiset.sethomes.SetHomes;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
+import java.util.HashMap;
+
 public class SetHome implements CommandExecutor{
 	private final SetHomes pl;
 	private int maxHomes;
@@ -54,9 +56,13 @@ public class SetHome implements CommandExecutor{
 				if(p.hasPermission("homes.sethome")) {
 
 					//Check if players amount of homes vs the config max homes allowed
-					if((pl.getPlayersNamedHomes(uuid).size() >= maxHomes && maxHomes != 0) && !p.hasPermission("homes.config_bypass")){
-						ChatUtils.sendInfo(p, pl.config.getString("max-homes-msg"));
-						return true;
+					if(pl.hasNamedHomes(uuid)){
+						if((pl.getPlayersNamedHomes(uuid).size() >= maxHomes && maxHomes != 0) && !p.hasPermission("homes.config_bypass")){
+							ChatUtils.sendInfo(p, pl.config.getString("max-homes-msg"));
+							return true;
+						}
+					}else{
+						pl.getConfig().set("allNamedHomes."+uuid, new HashMap<String, Home>());
 					}
 					
 					//Check if the player already has a home with the name they gave us
