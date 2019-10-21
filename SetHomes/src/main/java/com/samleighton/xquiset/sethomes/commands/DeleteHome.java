@@ -94,19 +94,19 @@ public class DeleteHome implements CommandExecutor{
 				}else{
 					//Perform deletion of the un-named home
 					pl.deleteUnknownHome(uuid);
-					ChatUtils.sendSuccess(p, "You have deleted the default home for player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + "!");
+					ChatUtils.sendSuccess(p, "You have deleted the default home for player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.GOLD + "!");
 					return true;
 				}
 			}else{
 				//Attempt to find a named home with the named passed to us
-				String homeName = args[0];
+				String homeName = args[1];
 				if(!(pl.hasNamedHomes(uuid)) || !(pl.getPlayersNamedHomes(uuid).containsKey(homeName))){
 					ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has no homes by that name!");
 					return false;
 				}else{
 					//Perform deletion of the named home
 					pl.deleteNamedHome(uuid, homeName);
-					ChatUtils.sendSuccess(p, "You have deleted the \'" + homeName + "\' home for player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + "!");
+					ChatUtils.sendSuccess(p, "You have deleted the \'" + homeName + "\' home for player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.GOLD + "!");
 					return true;
 				}
 			}

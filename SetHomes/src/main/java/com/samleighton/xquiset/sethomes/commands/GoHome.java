@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class GoHome implements CommandExecutor, Listener {
 
@@ -233,11 +234,12 @@ public class GoHome implements CommandExecutor, Listener {
                 return true;
             }
         }else{
-            if (!(pl.hasNamedHomes(uuid)) || !(pl.getPlayersNamedHomes(uuid).containsKey(args[1]))) {
+            final String homeName = args[1];
+            if (!(pl.hasNamedHomes(uuid)) || !(pl.getPlayersNamedHomes(uuid).containsKey(homeName))) {
                 ChatUtils.sendError(p, "That user has no homes by that name!");
                 return false;
             }
-            final String homeName = args[1];
+
             //Teleport the player to there home and send them a message telling them so
             if (pl.getConfig().getInt("tp-delay") > 0 && !p.hasPermission("homes.config_bypass")) {
                 //Run a timer to countdown the amount of time for tp delay and display a message on the users screen
