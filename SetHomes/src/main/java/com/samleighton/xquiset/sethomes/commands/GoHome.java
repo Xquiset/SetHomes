@@ -194,8 +194,8 @@ public class GoHome implements CommandExecutor, Listener {
     /**
      *
      * @param p The player you are trying to teleport
-     * @param uuid the unique id string of the player
-     * @param args the arguments the player passed with the command
+     * @param uuid the unique id string of the player they are trying to get homes of
+     * @param args the arguments the player passed via command
      * @return true on successful teleport false in all other cases
      */
     private boolean teleportHomeOf(final Player p, final String uuid, String[] args){
