@@ -1,10 +1,7 @@
 package com.samleighton.xquiset.sethomes.commands;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,6 +12,7 @@ import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -119,6 +117,7 @@ public class GoHome implements CommandExecutor, Listener {
      * @return true on successful teleport, false otherwise
      */
     public boolean teleportHome(final Player p, final String uuid, String[] args) {
+        //The players location upon command execution
         locale = p.getLocation();
         if (args.length < 1) {
             //If they have no home tell them
@@ -137,10 +136,18 @@ public class GoHome implements CommandExecutor, Listener {
                                 pl.cancelTask(taskId);
                                 //Teleport the player to their home
                                 p.teleport(pl.getPlayersUnnamedHome(uuid));
+                                //Spawn particles at players feet after teleport
+                                p.spawnParticle(Particle.PORTAL, p.getLocation(), 100);
+                                //Play note on teleport
+                                p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
                                 //Add player to cooldown list
                                 cooldownList.put(uuid, System.currentTimeMillis());
                             }else{
+                                //Send title to player every second
                                 p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
+                                //Play note every second
+                                p.playNote(p.getLocation(), Instrument.DIDGERIDOO, Note.sharp(2, Note.Tone.F));
+                                //Decrement time left by 1 every second
                                 delay--;
                             }
                         }
@@ -148,7 +155,13 @@ public class GoHome implements CommandExecutor, Listener {
                 } else {
                     //tp delay was not active in config so we teleport without starting repeating task
                     p.teleport(pl.getPlayersUnnamedHome(uuid));
+                    //Spawn particles at players feet after teleport
+                    p.spawnParticle(Particle.PORTAL, p.getLocation(), 100);
+                    //Player note on teleport
+                    p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
+                    //Notify player of successful teleport
                     ChatUtils.sendSuccess(p, "You have been teleported home!");
+                    //Add player to cooldown list
                     cooldownList.put(uuid, System.currentTimeMillis());
                 }
                 return true;
@@ -174,9 +187,18 @@ public class GoHome implements CommandExecutor, Listener {
                             pl.cancelTask(taskId);
                             //Teleport the player to their home
                             p.teleport(pl.getNamedHomeLocal(uuid, homeName));
+                            //Spawn particles at players feet after teleport
+                            p.spawnParticle(Particle.PORTAL, p.getLocation(), 100);
+                            //Play note on teleport
+                            p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
+                            //Add player to cooldown list
                             cooldownList.put(uuid, System.currentTimeMillis());
                         }else{
+                            //Send title every second
                             p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 5, 5, 5);
+                            //Play note every second
+                            p.playNote(p.getLocation(), Instrument.DIDGERIDOO, Note.sharp(2, Note.Tone.F));
+                            //Decrement the time left
                             delay--;
                         }
                     }
@@ -184,7 +206,13 @@ public class GoHome implements CommandExecutor, Listener {
             } else {
                 //Teleport the player to their home
                 p.teleport(pl.getNamedHomeLocal(uuid, args[0]));
+                //Spawn particles at players feet after teleport
+                p.spawnParticle(Particle.PORTAL, p.getLocation(), 100);
+                //Play note on teleport
+                p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
+                //Tell the player they've teleported
                 ChatUtils.sendSuccess(p, "You have been teleported home!");
+                //Add player to cooldown list
                 cooldownList.put(uuid, System.currentTimeMillis());
             }
             return true;
@@ -199,6 +227,7 @@ public class GoHome implements CommandExecutor, Listener {
      * @return true on successful teleport false in all other cases
      */
     private boolean teleportHomeOf(final Player p, final String uuid, String[] args){
+        locale = p.getLocation();
         //Only one argument passed so we are searching for a default home
         if(args.length == 1){
             //Check to make sure
@@ -217,10 +246,18 @@ public class GoHome implements CommandExecutor, Listener {
                                 pl.cancelTask(taskId);
                                 //Teleport the player to their home
                                 p.teleport(pl.getPlayersUnnamedHome(uuid));
+                                //Spawn particles at players feet after teleport
+                                p.spawnParticle(Particle.PORTAL, p.getLocation(), 100);
+                                //Play note on teleport
+                                p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
                                 //Add player to cooldown list
                                 cooldownList.put(p.getUniqueId().toString(), System.currentTimeMillis());
                             }else{
+                                //Send title every second
                                 p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
+                                //Play note every second
+                                p.playNote(p.getLocation(), Instrument.DIDGERIDOO, Note.sharp(2, Note.Tone.F));
+                                //Decrement time left by 1
                                 delay--;
                             }
                         }
@@ -228,7 +265,13 @@ public class GoHome implements CommandExecutor, Listener {
                 } else {
                     //tp delay was not active in config so we teleport without starting repeating task
                     p.teleport(pl.getPlayersUnnamedHome(uuid));
+                    //Spawn particles at players feet after teleport
+                    p.spawnParticle(Particle.PORTAL, p.getLocation(), 100);
+                    //Play note on teleport
+                    p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
+                    //Notify player of successful teleport
                     ChatUtils.sendSuccess(p, "You have been teleported!");
+                    //Add player to cooldown list
                     cooldownList.put(p.getUniqueId().toString(), System.currentTimeMillis());
                 }
                 return true;
@@ -250,9 +293,18 @@ public class GoHome implements CommandExecutor, Listener {
                             pl.cancelTask(taskId);
                             //Teleport the player to their home
                             p.teleport(pl.getNamedHomeLocal(uuid, homeName));
+                            //Spawn particles at players feet after teleport
+                            p.spawnParticle(Particle.PORTAL, p.getLocation(), 100);
+                            //Play note on teleport
+                            p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
+                            //Add player to cooldown list
                             cooldownList.put(p.getUniqueId().toString(), System.currentTimeMillis());
                         }else{
+                            //Send the player a title every second
                             p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 5, 5, 5);
+                            //Play note on teleport
+                            p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
+                            //Decrement time left by 1 every second
                             delay--;
                         }
                     }
@@ -260,7 +312,13 @@ public class GoHome implements CommandExecutor, Listener {
             } else {
                 //Teleport the player to their home
                 p.teleport(pl.getNamedHomeLocal(uuid, args[1]));
+                //Spawn particles at players feet after teleport
+                p.spawnParticle(Particle.PORTAL, p.getLocation(), 100);
+                //Play note on teleport
+                p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
+                //Notify player of successful teleport
                 ChatUtils.sendSuccess(p, "You have been teleported!");
+                //Add player to cooldown list
                 cooldownList.put(p.getUniqueId().toString(), System.currentTimeMillis());
             }
         }
@@ -283,6 +341,8 @@ public class GoHome implements CommandExecutor, Listener {
                             pl.cancelTask(taskId);
                             //Tell them the teleport has been canceled
                             ChatUtils.sendInfo(e.getPlayer(), pl.getConfig().getString("tp-cancelOnMove-msg"));
+                            //Play a snare sound when the player moves during the teleport delay
+                            e.getPlayer().playNote(e.getPlayer().getLocation(), Instrument.SNARE_DRUM, Note.natural(0, Note.Tone.F));
                         }
                     }
                 }
