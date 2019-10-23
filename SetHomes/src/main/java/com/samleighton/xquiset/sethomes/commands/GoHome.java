@@ -302,8 +302,8 @@ public class GoHome implements CommandExecutor, Listener {
                         }else{
                             //Send the player a title every second
                             p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 5, 5, 5);
-                            //Play note on teleport
-                            p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
+                            //Play note every second
+                            p.playNote(p.getLocation(), Instrument.DIDGERIDOO, Note.sharp(2, Note.Tone.F));
                             //Decrement time left by 1 every second
                             delay--;
                         }
