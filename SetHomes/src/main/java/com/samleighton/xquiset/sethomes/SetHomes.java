@@ -10,10 +10,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 //Author: Xquiset
 //Plugin: SetHomes
@@ -24,13 +26,13 @@ public class SetHomes extends JavaPlugin {
     private Homes homes = new Homes(this);
     private String configHeader =
             StringUtils.repeat("-", 26) + "\n\tSetHomes Config\t\n" + StringUtils.repeat("-", 26) + "\n" +
-            "Messages: \n\tYou can use chat colors in messages with this symbol §.\n" +
-            "\tI.E: §b will change any text after it to an aqua blue color.\n" +
-            "\tColor codes can be found here https://www.digminecraft.com/lists/color_list_pc.php\n" +
-            "Time: \n\tAny time value is based in seconds.\n" +
-            "Things to Note: \n\tSet any integer option to 0 for it to be ignored.\n" +
-            "\tThe max-homes does not include the default un-named home.\n" +
-            "\tUse %s as the seconds variable in the cooldown message.\n";
+                    "Messages: \n\tYou can use chat colors in messages with this symbol §.\n" +
+                    "\tI.E: §b will change any text after it to an aqua blue color.\n" +
+                    "\tColor codes can be found here https://www.digminecraft.com/lists/color_list_pc.php\n" +
+                    "Time: \n\tAny time value is based in seconds.\n" +
+                    "Things to Note: \n\tSet any integer option to 0 for it to be ignored.\n" +
+                    "\tThe max-homes does not include the default un-named home.\n" +
+                    "\tUse %s as the seconds variable in the cooldown message.\n";
 
     @Override
     public void onEnable() {
@@ -332,6 +334,14 @@ public class SetHomes extends JavaPlugin {
      * @param taskId
      */
     public void cancelTask(int taskId) {
+        Bukkit.getLogger().log(Level.INFO, "Attempting to stop task #" + taskId);
         Bukkit.getScheduler().cancelTask(taskId);
+
+        for(BukkitTask t : Bukkit.getScheduler().getPendingTasks()){
+            if(t.getTaskId() == taskId){
+                Bukkit.getLogger().log(Level.SEVERE, "There was an error canceling task #" + taskId);
+                break;
+            }
+        }
     }
 }
