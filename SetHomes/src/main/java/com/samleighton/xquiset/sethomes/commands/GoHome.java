@@ -1,14 +1,13 @@
 package com.samleighton.xquiset.sethomes.commands;
 
+import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.samleighton.xquiset.sethomes.SetHomes;
-import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -16,7 +15,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class GoHome implements CommandExecutor, Listener {
 
@@ -44,6 +42,11 @@ public class GoHome implements CommandExecutor, Listener {
 
         p = (Player) sender;
         if (cmd.getName().equalsIgnoreCase("home")) {
+            if (isTeleporting()) {
+                ChatUtils.sendError(p, "You may not use this command while teleporting!");
+                return true;
+            }
+
             final String uuid = p.getUniqueId().toString();
 
             //If cooldown is active in config then check to see if player is in cooldown list
@@ -72,13 +75,18 @@ public class GoHome implements CommandExecutor, Listener {
             }
         }
 
-        if(cmd.getName().equalsIgnoreCase("home-of")){
-            if(!p.hasPermission("homes.home-of")){
+        if(cmd.getName().equalsIgnoreCase("home-of")) {
+            if (!p.hasPermission("homes.home-of")) {
                 ChatUtils.permissionError(p);
                 return false;
             }
 
-            if(args.length < 1 || args.length > 2){
+            if (isTeleporting()) {
+                ChatUtils.sendError(p, "You may not use this command while teleporting!");
+                return true;
+            }
+
+            if (args.length < 1 || args.length > 2) {
                 ChatUtils.sendError(p, "ERROR: Incorrect number of arguments!");
                 return false;
             }
@@ -122,7 +130,6 @@ public class GoHome implements CommandExecutor, Listener {
                     taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                         int delay = pl.getConfig().getInt("tp-delay");
                         public void run(){
-                            Bukkit.getLogger().log(Level.INFO, "Running task " + taskId);
                             if (delay == 0) {
                                 //Cancel this repeating task
                                 pl.cancelTask(taskId);
@@ -176,7 +183,6 @@ public class GoHome implements CommandExecutor, Listener {
                 taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                     int delay = pl.getConfig().getInt("tp-delay");
                     public void run(){
-                        Bukkit.getLogger().log(Level.INFO, "Running task " + taskId);
                         if (delay == 0) {
                             pl.cancelTask(taskId);
                             //Teleport the player to their home
@@ -236,7 +242,6 @@ public class GoHome implements CommandExecutor, Listener {
                     taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                         int delay = pl.getConfig().getInt("tp-delay");
                         public void run(){
-                            Bukkit.getLogger().log(Level.INFO, "Running task " + taskId);
                             if (delay == 0) {
                                 //Cancel this repeating task
                                 pl.cancelTask(taskId);
@@ -286,7 +291,6 @@ public class GoHome implements CommandExecutor, Listener {
                 taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                     int delay = pl.getConfig().getInt("tp-delay");
                     public void run(){
-                        Bukkit.getLogger().log(Level.INFO, "Running task " + taskId);
                         if (delay == 0) {
                             pl.cancelTask(taskId);
                             //Teleport the player to their home
@@ -324,25 +328,35 @@ public class GoHome implements CommandExecutor, Listener {
         return true;
     }
 
+    public boolean isTeleporting() {
+        //Loop through all running/pending tasks
+        for (BukkitTask t : Bukkit.getScheduler().getPendingTasks()) {
+            //Attempt to find our taskId in the list
+            if (t.getTaskId() == taskId) {
+                //Task id was found return true
+                return true;
+            }
+        }
+        //No taskId found return false
+        return false;
+    }
+
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e){
+    public void onPlayerMove(PlayerMoveEvent e) {
         //Make sure the player triggering the move event is the player currently trying to teleport
-        if(e.getPlayer() == p){
+        if (e.getPlayer() == p) {
             //Get the running delay task that was created for the player
-            for (BukkitTask task : Bukkit.getScheduler().getPendingTasks()) {
-                //Get the task that matches the one displaying for this player
-                if(task.getTaskId() == taskId){
-                    //Check to make sure the player moved from the location that they started the teleport at
-                    if(e.getPlayer().getLocation().getX() != locale.getX() || e.getPlayer().getLocation().getY() != locale.getY()){
-                        //Check our config var to see if we continue with canceling the task or if the player has bypass permissions
-                        if (cancelOnMove && !e.getPlayer().hasPermission("homes.config_bypass")) {
-                            //cancel the task
-                            pl.cancelTask(taskId);
-                            //Tell them the teleport has been canceled
-                            ChatUtils.sendInfo(e.getPlayer(), pl.getConfig().getString("tp-cancelOnMove-msg"));
-                            //Play a snare sound when the player moves during the teleport delay
-                            e.getPlayer().playNote(e.getPlayer().getLocation(), Instrument.SNARE_DRUM, Note.natural(0, Note.Tone.F));
-                        }
+            if (isTeleporting()) {
+                //Check to make sure the player moved from the location that they started the teleport at
+                if (e.getPlayer().getLocation().getX() != locale.getX() || e.getPlayer().getLocation().getY() != locale.getY()) {
+                    //Check our config var to see if we continue with canceling the task or if the player has bypass permissions
+                    if (cancelOnMove && !e.getPlayer().hasPermission("homes.config_bypass")) {
+                        //cancel the task
+                        pl.cancelTask(taskId);
+                        //Tell them the teleport has been canceled
+                        ChatUtils.sendInfo(e.getPlayer(), pl.getConfig().getString("tp-cancelOnMove-msg"));
+                        //Play a snare sound when the player moves during the teleport delay
+                        e.getPlayer().playNote(e.getPlayer().getLocation(), Instrument.SNARE_DRUM, Note.natural(0, Note.Tone.F));
                     }
                 }
             }

@@ -10,12 +10,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
 //Author: Xquiset
 //Plugin: SetHomes
@@ -334,14 +332,6 @@ public class SetHomes extends JavaPlugin {
      * @param taskId
      */
     public void cancelTask(int taskId) {
-        Bukkit.getLogger().log(Level.INFO, "Attempting to stop task #" + taskId);
         Bukkit.getScheduler().cancelTask(taskId);
-
-        for(BukkitTask t : Bukkit.getScheduler().getPendingTasks()){
-            if(t.getTaskId() == taskId){
-                Bukkit.getLogger().log(Level.SEVERE, "There was an error canceling task #" + taskId);
-                break;
-            }
-        }
     }
 }
