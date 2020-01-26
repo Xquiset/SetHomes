@@ -86,25 +86,25 @@ public class SetHomes extends JavaPlugin {
                 && config.isSet("tp-cooldown") && config.isSet("tp-cancelOnMove")
                 && config.isSet("tp-cancelOnMove-msg") && config.isSet("tp-cooldown-msg"))) {
             //Sets the max homes to unlimited by default
-            if(!config.isSet("max-homes")){
+            if (!config.isSet("max-homes")) {
                 config.set("max-homes", 0);
             }
-            if(!config.isSet("max-homes-msg")){
+            if (!config.isSet("max-homes-msg")) {
                 config.set("max-homes-msg", "§4You have reached the maximum amount of saved homes!");
             }
-            if(!config.isSet("tp-delay")){
+            if (!config.isSet("tp-delay")) {
                 config.set("tp-delay", 3);
             }
-            if(!config.isSet("tp-cooldown")){
+            if (!config.isSet("tp-cooldown")) {
                 config.set("tp-cooldown", 0);
             }
-            if(!config.isSet("tp-cancelOnMove")){
+            if (!config.isSet("tp-cancelOnMove")) {
                 config.set("tp-cancelOnMove", false);
             }
-            if(!config.isSet("tp-cancelOnMove-msg")){
+            if (!config.isSet("tp-cancelOnMove-msg")) {
                 config.set("tp-cancelOnMove-msg", "§4Movement detected! Teleporting has been cancelled!");
             }
-            if(!config.isSet("tp-cooldown-msg")){
+            if (!config.isSet("tp-cooldown-msg")) {
                 config.set("tp-cooldown-msg", "§4You must wait another %s second(s) before teleporting!");
             }
         }
@@ -122,7 +122,7 @@ public class SetHomes extends JavaPlugin {
      * to handle the execution of these
      * commands
      */
-    public void registerCommands(){
+    public void registerCommands() {
         this.getCommand("sethome").setExecutor(new SetHome(this));
         this.getCommand("homes").setExecutor(new ListHomes(this));
         this.getCommand("delhome").setExecutor(new DeleteHome(this));
@@ -329,6 +329,7 @@ public class SetHomes extends JavaPlugin {
 
     /**
      * Used to cancel a bukkit runnable task
+     *
      * @param taskId
      */
     public void cancelTask(int taskId) {

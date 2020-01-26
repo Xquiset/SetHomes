@@ -1,6 +1,6 @@
 name: SetHomes
 main: com.samleighton.xquiset.sethomes.SetHomes
-version: '1.2.4'
+version: '1.2.5'
 author: Xquiset
 commands:
    home:

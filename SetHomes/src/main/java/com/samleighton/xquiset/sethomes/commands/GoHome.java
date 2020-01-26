@@ -94,6 +94,7 @@ public class GoHome implements CommandExecutor, Listener {
             //Get current players location
             locale = p.getLocation();
             //Create offline player for their target player
+            @SuppressWarnings("deprecated")
             OfflinePlayer targetP = Bukkit.getServer().getOfflinePlayer(args[0]);
 
             //Check to make sure the offline player has player on the server before

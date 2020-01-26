@@ -1,8 +1,7 @@
 package com.samleighton.xquiset.sethomes.commands;
 
-import java.util.UUID;
-import java.util.logging.Level;
-
+import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,8 +11,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.samleighton.xquiset.sethomes.SetHomes;
-import com.samleighton.xquiset.sethomes.utils.ChatUtils;
+import java.util.UUID;
 
 public class ListHomes implements CommandExecutor{
 
@@ -37,12 +35,13 @@ public class ListHomes implements CommandExecutor{
 			if(args.length == 1) {
 				if(p.hasPermission("homes.gethomes")) {
 					//Create a offline player for the name they passed
+					@SuppressWarnings("deprecated")
 					OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
 					//Check to make sure the player has actually joined the server
-					if(offlinePlayer.hasPlayedBefore()){
+					if (offlinePlayer.hasPlayedBefore()) {
 						UUID uuid = offlinePlayer.getUniqueId();
 						listHomes(uuid, p);
-					}else{
+					} else {
 						ChatUtils.sendError(p, "That user has never player here before!");
 						return true;
 					}

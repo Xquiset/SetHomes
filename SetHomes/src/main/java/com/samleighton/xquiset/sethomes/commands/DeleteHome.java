@@ -1,5 +1,7 @@
 package com.samleighton.xquiset.sethomes.commands;
 
+import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -7,9 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.samleighton.xquiset.sethomes.SetHomes;
-import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 
 public class DeleteHome implements CommandExecutor{
 	private final SetHomes pl;
@@ -71,22 +70,23 @@ public class DeleteHome implements CommandExecutor{
 			}
 
 			//Check for the correct range of argument numbers
-			if(args.length < 1 || args.length > 2){
+			if (args.length < 1 || args.length > 2) {
 				ChatUtils.sendError(p, "ERROR: Incorrect number of arguments!");
 				return false;
 			}
 
 			//Create new offline player for the player name they entered
+			@SuppressWarnings("deprecated")
 			OfflinePlayer targetP = Bukkit.getServer().getOfflinePlayer(args[0]);
 			//Check to be sure the player has played on the server before
-			if(!targetP.hasPlayedBefore()){
+			if (!targetP.hasPlayedBefore()) {
 				ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has never played here before!");
 				return false;
 			}
 
 			String uuid = targetP.getUniqueId().toString();
 			//If only player name given try deleting the default home
-			if(args.length == 1){
+			if (args.length == 1) {
 				//Check to see if the player has a default home set before we try to delete it
 				if(!pl.hasUnknownHomes(uuid)){
 					ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has no default home!");

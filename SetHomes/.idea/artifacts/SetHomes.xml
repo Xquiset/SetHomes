@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="SetHomes">
-    <output-path>$USER_HOME$/Desktop/Minecraft Server/plugins</output-path>
-    <root id="archive" name="SetHomes.jar">
-      <element id="module-output" name="SetHomes" />
-      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
-    </root>
-  </artifact>
-</component>
