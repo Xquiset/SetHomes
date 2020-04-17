@@ -1,3 +1,2 @@
 1. Add the ability to set a different max home number for different permission groups.
 2. Add the ability to update a homes location by name
-3. Add a delete home permission

@@ -1,75 +1,87 @@
 name: SetHomes
 main: com.samleighton.xquiset.sethomes.SetHomes
-version: '1.2.5'
+version: '1.2.6'
 author: Xquiset
 commands:
-   home:
-      description: Teleports a player to their home.
-      usage: /<command> <HomeName>
-      aliases: h
-   home-of:
-      description: Teleports the player sending the command to any players home. The default home name is 'unnamed_home'.
-      usage: /<command> <PlayerName> <HomeName>
-   homes:
-      description: Lists all of a players homes.
-      usage: /<command> <player>
-      aliases: lh
-   sethome:
-      description: Sets a players home at the standing location.
-      usage: /<command> <HomeName> <HomeDescription>
-      aliases: sh
-   delhome:
-      description: Deletes a home from the list of players homes.
-      usage: /<command> <HomeName>
-      aliases: dh
-   delhome-of:
-      description: Gives a player the ability to delete a home from the list of any players home.
-      usage: /<command> <PlayerName> <HomeName>
-   strike:
-      description: Strike fury into your enemies with your wand.
-      usage: /<command>
-   blacklist:
-      description: Blacklist of worlds to disallow home setting in
-      usage: /<command> <Add/Remove> <WorldName>
+  home:
+    description: Teleports a player to their home.
+    usage: /<command> <HomeName>
+    aliases: h
+  home-of:
+    description: Teleports the player sending the command to any players home. The default home name is 'unnamed_home'.
+    usage: /<command> <PlayerName> <HomeName>
+  homes:
+    description: Lists all of a players homes.
+    usage: /<command> <player>
+    aliases: lh
+  sethome:
+    description: Sets a players home at the standing location.
+    usage: /<command> <HomeName> <HomeDescription>
+    aliases: sh
+  delhome:
+    description: Deletes a home from the list of players homes.
+    usage: /<command> <HomeName>
+    aliases: dh
+  delhome-of:
+    description: Gives a player the ability to delete a home from the list of any players home.
+    usage: /<command> <PlayerName> <HomeName>
+  uhome:
+    description: Allows a player to update their home by home name
+    usage: /<command> <HomeName> <HomeDescription>
+    aliases: uh
+  strike:
+    description: Strike fury into your enemies with your wand.
+    usage: /<command>
+  blacklist:
+    description: Blacklist of worlds to disallow home setting in
+    usage: /<command> <Add/Remove> <WorldName>
 permissions:
-   homes.*:
-      description: Allows all commands from the Homes plugin to be run.
-      default: op
-      children:
-         homes.sethome: true
-         homes.strike: true
-         homes.gethomes: true
-         homes.config_bypass: true
-         homes.blacklist_list: true
-         homes.blacklist_add: true
-         homes.blacklist_remove: true
-         homes.home-of: true
-         homes.delhome-of: true
-   homes.strike:
-       description: Allows a player to strike.
-       default: false
-   homes.sethome:
-      description: Allows a player to set homes.
-      default: false
-   homes.gethomes:
-      description: Lists the homes for a specific player
-      default: false
-   homes.blacklist_list:
-      description: Lists the worlds in the blacklist
-      default: false
-   homes.blacklist_add:
-      description: Add a world to the blacklist
-      default: false
-   homes.blacklist_remove:
-      description: Remove worlds from the blacklist
-      default: false
-   homes.config_bypass:
-      description: Allows the player with this permission to by config restrictions
-      default: false
-   homes.home-of:
-      description: Allows the player to teleport to other players homes.
-      default: false
-   homes.delhome-of:
-      description: Allows the player to delete other players saved homes.
-      default: false
+  homes.*:
+    description: Allows all commands from the Homes plugin to be run.
+    default: op
+    children:
+      homes.sethome: true
+      homes.strike: true
+      homes.gethomes: true
+      homes.config_bypass: true
+      homes.blacklist_list: true
+      homes.blacklist_add: true
+      homes.blacklist_remove: true
+      homes.home-of: true
+      homes.delhome-of: true
+      homes.delhome: true
+      homes.uhome: true
+  homes.strike:
+    description: Allows a player to strike.
+    default: false
+  homes.sethome:
+    description: Allows a player to set homes.
+    default: false
+  homes.gethomes:
+    description: Lists the homes for a specific player
+    default: false
+  homes.blacklist_list:
+    description: Lists the worlds in the blacklist
+    default: false
+  homes.blacklist_add:
+    description: Add a world to the blacklist
+    default: false
+  homes.blacklist_remove:
+    description: Remove worlds from the blacklist
+    default: false
+  homes.config_bypass:
+    description: Allows the player with this permission to by config restrictions
+    default: false
+  homes.home-of:
+    description: Allows the player to teleport to other players homes.
+    default: false
+  homes.delhome-of:
+    description: Allows the player to delete other players saved homes.
+    default: false
+  homes.delhome:
+    description: Allows the player to delete their own homes
+    default: true
+  homes.uhome:
+    description: Allows the player to update their homes
+    default: false
       

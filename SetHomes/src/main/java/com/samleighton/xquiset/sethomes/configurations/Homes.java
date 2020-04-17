@@ -11,20 +11,20 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.logging.Level;
 
-public class Homes extends Config{
+public class Homes extends Config {
 
     private SetHomes pl;
     private FileConfiguration homes = null;
     private File homesFile = null;
 
-    public Homes(SetHomes plugin){
+    public Homes(SetHomes plugin) {
         super(plugin);
         this.pl = plugin;
     }
 
     @Override
     public void reloadConfig() {
-        if(homesFile == null) {
+        if (homesFile == null) {
             homesFile = new File(pl.getDataFolder().getPath(), "homes.yml");
         }
 
@@ -46,7 +46,7 @@ public class Homes extends Config{
 
     @Override
     public FileConfiguration getConfig() {
-        if(homes == null) {
+        if (homes == null) {
             reloadConfig();
         }
         return homes;
@@ -54,7 +54,7 @@ public class Homes extends Config{
 
     @Override
     public void save() {
-        if(homes == null || homesFile == null) {
+        if (homes == null || homesFile == null) {
             return;
         }
 

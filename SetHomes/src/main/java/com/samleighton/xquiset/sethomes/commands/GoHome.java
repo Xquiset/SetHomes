@@ -75,7 +75,7 @@ public class GoHome implements CommandExecutor, Listener {
             }
         }
 
-        if(cmd.getName().equalsIgnoreCase("home-of")) {
+        if (cmd.getName().equalsIgnoreCase("home-of")) {
             if (!p.hasPermission("homes.home-of")) {
                 ChatUtils.permissionError(p);
                 return false;
@@ -94,11 +94,11 @@ public class GoHome implements CommandExecutor, Listener {
             //Get current players location
             locale = p.getLocation();
             //Create offline player for their target player
-            @SuppressWarnings("deprecated")
+            @SuppressWarnings({"deprecated"})
             OfflinePlayer targetP = Bukkit.getServer().getOfflinePlayer(args[0]);
 
             //Check to make sure the offline player has player on the server before
-            if(!targetP.hasPlayedBefore()){
+            if (!targetP.hasPlayedBefore()) {
                 ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has never played here before!");
                 return false;
             }
@@ -130,7 +130,8 @@ public class GoHome implements CommandExecutor, Listener {
                     //Run a timer to countdown the amount of time for tp delay and display a message on the users screen
                     taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                         int delay = pl.getConfig().getInt("tp-delay");
-                        public void run(){
+
+                        public void run() {
                             if (delay == 0) {
                                 //Cancel this repeating task
                                 pl.cancelTask(taskId);
@@ -143,7 +144,7 @@ public class GoHome implements CommandExecutor, Listener {
                                 //Add player to cooldown list
                                 cooldownList.put(uuid, System.currentTimeMillis());
                                 return;
-                            }else{
+                            } else {
                                 //Send title to player every second
                                 p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
                                 //Play note every second
@@ -183,7 +184,8 @@ public class GoHome implements CommandExecutor, Listener {
                 //Run a timer to countdown the amount of time for tp delay and display a message on the users screen
                 taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                     int delay = pl.getConfig().getInt("tp-delay");
-                    public void run(){
+
+                    public void run() {
                         if (delay == 0) {
                             pl.cancelTask(taskId);
                             //Teleport the player to their home
@@ -195,7 +197,7 @@ public class GoHome implements CommandExecutor, Listener {
                             //Add player to cooldown list
                             cooldownList.put(uuid, System.currentTimeMillis());
                             return;
-                        }else{
+                        } else {
                             //Send title every second
                             p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 5, 5, 5);
                             //Play note every second
@@ -222,27 +224,27 @@ public class GoHome implements CommandExecutor, Listener {
     }
 
     /**
-     *
-     * @param p The player you are trying to teleport
+     * @param p    The player you are trying to teleport
      * @param uuid the unique id string of the player they are trying to get homes of
      * @param args the arguments the player passed via command
      * @return true on successful teleport false in all other cases
      */
-    private boolean teleportHomeOf(final Player p, final String uuid, String[] args){
+    private boolean teleportHomeOf(final Player p, final String uuid, String[] args) {
         locale = p.getLocation();
         //Only one argument passed so we are searching for a default home
-        if(args.length == 1){
+        if (args.length == 1) {
             //Check to make sure
-            if(!pl.hasUnknownHomes(uuid)){
+            if (!pl.hasUnknownHomes(uuid)) {
                 ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has no default home set!");
                 return false;
-            }else{
+            } else {
                 //Teleport the player to the home and send them a message telling them so
                 if (pl.getConfig().getInt("tp-delay") > 0 && !p.hasPermission("homes.config_bypass")) {
                     //Run a timer to countdown the amount of time for tp delay and display a message on the users screen
                     taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                         int delay = pl.getConfig().getInt("tp-delay");
-                        public void run(){
+
+                        public void run() {
                             if (delay == 0) {
                                 //Cancel this repeating task
                                 pl.cancelTask(taskId);
@@ -255,7 +257,7 @@ public class GoHome implements CommandExecutor, Listener {
                                 //Add player to cooldown list
                                 cooldownList.put(p.getUniqueId().toString(), System.currentTimeMillis());
                                 return;
-                            }else{
+                            } else {
                                 //Send title every second
                                 p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
                                 //Play note every second
@@ -279,7 +281,7 @@ public class GoHome implements CommandExecutor, Listener {
                 }
                 return true;
             }
-        }else{
+        } else {
             final String homeName = args[1];
             if (!(pl.hasNamedHomes(uuid)) || !(pl.getPlayersNamedHomes(uuid).containsKey(homeName))) {
                 ChatUtils.sendError(p, "That user has no homes by that name!");
@@ -291,7 +293,8 @@ public class GoHome implements CommandExecutor, Listener {
                 //Run a timer to countdown the amount of time for tp delay and display a message on the users screen
                 taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                     int delay = pl.getConfig().getInt("tp-delay");
-                    public void run(){
+
+                    public void run() {
                         if (delay == 0) {
                             pl.cancelTask(taskId);
                             //Teleport the player to their home
@@ -303,7 +306,7 @@ public class GoHome implements CommandExecutor, Listener {
                             //Add player to cooldown list
                             cooldownList.put(p.getUniqueId().toString(), System.currentTimeMillis());
                             return;
-                        }else{
+                        } else {
                             //Send the player a title every second
                             p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 5, 5, 5);
                             //Play note every second

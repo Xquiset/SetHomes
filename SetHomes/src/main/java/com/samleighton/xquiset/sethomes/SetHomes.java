@@ -22,15 +22,15 @@ public class SetHomes extends JavaPlugin {
     public FileConfiguration config, homesCfg, blacklistCfg;
     private WorldBlacklist blacklist = new WorldBlacklist(this);
     private Homes homes = new Homes(this);
-    private String configHeader =
-            StringUtils.repeat("-", 26) + "\n\tSetHomes Config\t\n" + StringUtils.repeat("-", 26) + "\n" +
-                    "Messages: \n\tYou can use chat colors in messages with this symbol §.\n" +
-                    "\tI.E: §b will change any text after it to an aqua blue color.\n" +
-                    "\tColor codes can be found here https://www.digminecraft.com/lists/color_list_pc.php\n" +
-                    "Time: \n\tAny time value is based in seconds.\n" +
-                    "Things to Note: \n\tSet any integer option to 0 for it to be ignored.\n" +
-                    "\tThe max-homes does not include the default un-named home.\n" +
-                    "\tUse %s as the seconds variable in the cooldown message.\n";
+    private String configHeader = StringUtils.repeat("-", 26)
+            + "\n\tSetHomes Config\t\n" + StringUtils.repeat("-", 26) + "\n"
+            + "Messages: \n\tYou can use chat colors in messages with this symbol §.\n"
+            + "\tI.E: §b will change any text after it to an aqua blue color.\n"
+            + "\tColor codes may be found here https://www.digminecraft.com/lists/color_list_pc.php\n"
+            + "Time: \n\tAny time value is based in seconds.\n"
+            + "Things to Note: \n\tSet any integer option to 0 for it to be ignored.\n"
+            + "\tThe max-homes does not include the default un-named home.\n"
+            + "\tUse %s as the seconds variable in the cooldown message.\n";
 
     @Override
     public void onEnable() {
@@ -131,6 +131,8 @@ public class SetHomes extends JavaPlugin {
         this.getCommand("blacklist").setExecutor(new Blacklist(this));
         this.getCommand("home-of").setExecutor(new GoHome(this));
         this.getCommand("delhome-of").setExecutor(new DeleteHome(this));
+        this.getCommand("uhome").setExecutor(new UpdateHome(this));
+        //this.getCommand("uhome-of").setExecutor(new UpdateHome(this));
     }
 
     /**
