@@ -99,7 +99,7 @@ public class GoHome implements CommandExecutor, Listener {
 
             //Check to make sure the offline player has player on the server before
             if (!targetP.hasPlayedBefore()) {
-                ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has never played here before!");
+                ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " has never played before!");
                 return false;
             }
 

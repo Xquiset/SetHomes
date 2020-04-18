@@ -132,7 +132,7 @@ public class SetHomes extends JavaPlugin {
         this.getCommand("home-of").setExecutor(new GoHome(this));
         this.getCommand("delhome-of").setExecutor(new DeleteHome(this));
         this.getCommand("uhome").setExecutor(new UpdateHome(this));
-        //this.getCommand("uhome-of").setExecutor(new UpdateHome(this));
+        this.getCommand("uhome-of").setExecutor(new UpdateHome(this));
     }
 
     /**

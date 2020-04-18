@@ -10,6 +10,7 @@ commands:
   home-of:
     description: Teleports the player sending the command to any players home. The default home name is 'unnamed_home'.
     usage: /<command> <PlayerName> <HomeName>
+    aliases: ho
   homes:
     description: Lists all of a players homes.
     usage: /<command> <player>
@@ -25,16 +26,22 @@ commands:
   delhome-of:
     description: Gives a player the ability to delete a home from the list of any players home.
     usage: /<command> <PlayerName> <HomeName>
+    aliases: dho
   uhome:
     description: Allows a player to update their home by home name
     usage: /<command> <HomeName> <HomeDescription>
     aliases: uh
+  uhome-of:
+    description: Gives a player the ability to update any players home
+    usage: /<command> <PlayerName> <HomeName>
+    aliases: uho
   strike:
     description: Strike fury into your enemies with your wand.
     usage: /<command>
   blacklist:
     description: Blacklist of worlds to disallow home setting in
     usage: /<command> <Add/Remove> <WorldName>
+    aliases: bl
 permissions:
   homes.*:
     description: Allows all commands from the Homes plugin to be run.
@@ -51,6 +58,7 @@ permissions:
       homes.delhome-of: true
       homes.delhome: true
       homes.uhome: true
+      homes.uhome-of: true
   homes.strike:
     description: Allows a player to strike.
     default: false
@@ -83,5 +91,8 @@ permissions:
     default: true
   homes.uhome:
     description: Allows the player to update their homes
+    default: false
+  homes.uhome-of:
+    description: Allows the player to update the home of another player
     default: false
       
