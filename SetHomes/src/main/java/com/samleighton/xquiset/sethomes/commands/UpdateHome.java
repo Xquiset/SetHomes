@@ -160,27 +160,27 @@ public class UpdateHome implements CommandExecutor {
 
             if (args.length == 2) {
                 //Check if the player already has a home with the name they gave us
-                if (!pl.getPlayersNamedHomes(uuid).containsKey(args[0])) {
+                if (!pl.getPlayersNamedHomes(uuid).containsKey(args[1])) {
                     // Notify player that no home was found
                     ChatUtils.sendError(p, "The player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + " does not have a home with that name!");
-                } else {
-                    // A home was found so we set the new home name as the same one
-                    newHome.setHomeName(args[0]);
-                    // Get the players homes so that we can retrieve the description of the home they're updating
-                    HashMap<String, Home> playersHomes = pl.getPlayersNamedHomes(uuid);
-                    // Get the home they supplied
-                    Home oldHome = playersHomes.get(args[0]);
-                    // Grab the description of the old home
-                    String desc = oldHome.getDesc();
-                    // Set the description of the new home to be the old home description
-                    newHome.setDesc(desc);
-
-                    // Save the new home in place of the old one
-                    pl.saveNamedHome(uuid, newHome);
-
-                    // Notify the player of the updated home success
-                    ChatUtils.sendSuccess(p, "You have updated the home \'" + newHome.getHomeName() + "\' for the player named " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + "!");
+                    return true;
                 }
+                // A home was found so we set the new home name as the same one
+                newHome.setHomeName(args[1]);
+                // Get the players homes so that we can retrieve the description of the home they're updating
+                HashMap<String, Home> playersHomes = pl.getPlayersNamedHomes(uuid);
+                // Get the home they supplied
+                Home oldHome = playersHomes.get(args[1]);
+                // Grab the description of the old home
+                String desc = oldHome.getDesc();
+                // Set the description of the new home to be the old home description
+                newHome.setDesc(desc);
+
+                // Save the new home in place of the old one
+                pl.saveNamedHome(uuid, newHome);
+
+                // Notify the player of the updated home success
+                ChatUtils.sendSuccess(p, "You have updated the home \'" + newHome.getHomeName() + "\' for the player named " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + "!");
                 return true;
             }
         }
