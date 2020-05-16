@@ -12,27 +12,27 @@ public class ChatUtils {
         }
     }
 
-    public static void sendInfo(Player p, String msg) {
-        p.sendMessage(ChatColor.WHITE + msg);
+    public static void sendInfo(CommandSender s, String msg) {
+        s.sendMessage(ChatColor.WHITE + msg);
     }
 
-    public static void sendError(Player p, String msg) {
-        p.sendMessage(ChatColor.DARK_RED + msg);
+    public static void sendError(CommandSender s, String msg) {
+        s.sendMessage(ChatColor.DARK_RED + msg);
     }
 
-    public static void sendSuccess(Player p, String msg) {
-        p.sendMessage(ChatColor.GOLD + msg);
+    public static void sendSuccess(CommandSender s, String msg) {
+        s.sendMessage(ChatColor.GOLD + msg);
     }
 
-    public static void notPlayerError(CommandSender sender) {
-        sender.sendMessage(ChatColor.DARK_RED + "You must be a player to use this command!");
+    public static void notPlayerError(CommandSender s) {
+        s.sendMessage(ChatColor.DARK_RED + "You must be a player to use this command!");
     }
 
-    public static void permissionError(Player p) {
-        sendError(p, "You dont have permission to do that!");
+    public static void permissionError(CommandSender s) {
+        sendError(s, "You dont have permission to do that!");
     }
 
-    public static void tooManyArgs(Player p) {
-        sendError(p, "ERROR: Too many arguments!");
+    public static void tooManyArgs(CommandSender s) {
+        sendError(s, "ERROR: Too many arguments!");
     }
 }

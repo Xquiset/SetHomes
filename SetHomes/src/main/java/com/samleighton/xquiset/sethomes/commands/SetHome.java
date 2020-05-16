@@ -3,19 +3,24 @@ package com.samleighton.xquiset.sethomes.commands;
 import com.samleighton.xquiset.sethomes.Home;
 import com.samleighton.xquiset.sethomes.SetHomes;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+
 public class SetHome implements CommandExecutor {
     private final SetHomes pl;
-    private int maxHomes;
+    private final HashMap<String, Integer> maxHomesList;
+    private final Permission perms;
 
     public SetHome(SetHomes plugin) {
         pl = plugin;
-        maxHomes = pl.config.getInt("max-homes");
+        maxHomesList = pl.getMaxHomes();
+        perms = pl.getPermissions();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -47,12 +52,12 @@ public class SetHome implements CommandExecutor {
                 pl.saveUnknownHome(uuid, playersHome);
 
                 ChatUtils.sendSuccess(p, "You have set a default home!");
-                return true;
                 //They have provided a home name and possibly description too
             } else {
                 if (p.hasPermission("homes.sethome")) {
                     //Check if players amount of homes vs the config max homes allowed
                     if (pl.hasNamedHomes(uuid)) {
+                        int maxHomes = getMaxHomesAllowed(p);
                         if ((pl.getPlayersNamedHomes(uuid).size() >= maxHomes && maxHomes != 0) && !p.hasPermission("homes.config_bypass")) {
                             ChatUtils.sendInfo(p, pl.config.getString("max-homes-msg"));
                             return true;
@@ -68,26 +73,49 @@ public class SetHome implements CommandExecutor {
                     playersHome.setHomeName(args[0]);
 
                     //Build the description as a combination of all other arguments passed
-                    String desc = "";
+                    StringBuilder desc = new StringBuilder();
                     for (int i = 1; i <= args.length - 1; i++) {
-                        desc += args[i] + " ";
+                        desc.append(args[i]).append(" ");
                     }
 
-                    if (!desc.equals("")) {
+                    if (!desc.toString().equals("")) {
                         playersHome.setDesc(desc.substring(0, desc.length() - 1));
                     }
 
                     //Save the new home
                     pl.saveNamedHome(uuid, playersHome);
 
-                    ChatUtils.sendSuccess(p, "Your home \'" + playersHome.getHomeName() + "\' has been set!");
+                    ChatUtils.sendSuccess(p, "Your home '" + playersHome.getHomeName() + "' has been set!");
                     return true;
                 }
                 //Send player message because they didn't have the proper permissions
                 ChatUtils.permissionError(p);
-                return true;
             }
+            return true;
         }
         return false;
+    }
+
+    /**
+     * Gets the maximum homes allowed for a player. Will take the greatest value when player
+     * has multiple groups assigned to them
+     *
+     * @param p, The player we're attempting to get the homes for
+     * @return maximum number of homes allowed for that player
+     */
+    private int getMaxHomesAllowed(Player p) {
+        int maxHomes = 0;
+
+        for (String group : perms.getPlayerGroups(p)) {
+            for (String g : maxHomesList.keySet()) {
+                if (group.equalsIgnoreCase(g)) {
+                    if (maxHomesList.get(g) > maxHomes) {
+                        maxHomes = maxHomesList.get(g);
+                    }
+                }
+            }
+        }
+
+        return maxHomes;
     }
 }

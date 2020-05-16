@@ -2,6 +2,8 @@ name: SetHomes
 main: com.samleighton.xquiset.sethomes.SetHomes
 version: '1.2.6'
 author: Xquiset
+depend:
+  - Vault
 commands:
   home:
     description: Teleports a player to their home.
@@ -42,6 +44,10 @@ commands:
     description: Blacklist of worlds to disallow home setting in
     usage: /<command> <Add/Remove> <WorldName>
     aliases: bl
+  setmax:
+    description: Set the max number of homes allowed for a group
+    usage: /<command> <GroupName> <Amount>
+    aliases: sm
 permissions:
   homes.*:
     description: Allows all commands from the Homes plugin to be run.
@@ -59,6 +65,7 @@ permissions:
       homes.delhome: true
       homes.uhome: true
       homes.uhome-of: true
+      homes.setmax: true
   homes.strike:
     description: Allows a player to strike.
     default: false
@@ -94,5 +101,8 @@ permissions:
     default: false
   homes.uhome-of:
     description: Allows the player to update the home of another player
+    default: false
+  homes.setmax:
+    description: Allows the player to set the maximum number of homes for a permission group
     default: false
       

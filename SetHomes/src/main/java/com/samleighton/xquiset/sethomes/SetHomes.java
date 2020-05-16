@@ -4,22 +4,28 @@ import com.samleighton.xquiset.sethomes.commands.*;
 import com.samleighton.xquiset.sethomes.configurations.Homes;
 import com.samleighton.xquiset.sethomes.configurations.WorldBlacklist;
 import com.samleighton.xquiset.sethomes.eventListeners.EventListener;
+import com.samleighton.xquiset.sethomes.versionControl.Updater;
+import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 //Author: Xquiset
 //Plugin: SetHomes
 public class SetHomes extends JavaPlugin {
 
-    public FileConfiguration config, homesCfg, blacklistCfg;
+    public FileConfiguration config;
+    private FileConfiguration homesCfg, blacklistCfg;
+    private Permission perms = null;
     private WorldBlacklist blacklist = new WorldBlacklist(this);
     private Homes homes = new Homes(this);
     private String configHeader = StringUtils.repeat("-", 26)
@@ -34,11 +40,18 @@ public class SetHomes extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        //Setup permission
+        setupPermissions();
         //Load the configuration files on enable or reload
         loadConfigurationFiles();
         //Initialize the command executors
         registerCommands();
+        //Register event listener
         new EventListener(this);
+        // Check if auto-updating is enabled
+        if (config.getBoolean("auto-update")) {
+            new Updater(this, 312833, this.getFile(), Updater.UpdateType.DEFAULT, true);
+        }
     }
 
     //Unused
@@ -82,12 +95,14 @@ public class SetHomes extends JavaPlugin {
         copyHomes(config, getHomes());
 
         //Setup defaults for config
-        if (!(config.isSet("max-homes") && config.isSet("max-homes-msg") && config.isSet("tp-delay")
-                && config.isSet("tp-cooldown") && config.isSet("tp-cancelOnMove")
-                && config.isSet("tp-cancelOnMove-msg") && config.isSet("tp-cooldown-msg"))) {
+        if (!config.isSet("max-homes") || !config.isSet("max-homes-msg") || !config.isSet("tp-delay")
+                || !config.isSet("tp-cooldown") || !config.isSet("tp-cancelOnMove")
+                || !config.isSet("tp-cancelOnMove-msg") || !config.isSet("tp-cooldown-msg")
+                || !config.isSet("auto-update")) {
             //Sets the max homes to unlimited by default
+
             if (!config.isSet("max-homes")) {
-                config.set("max-homes", 0);
+                config.set("max-homes.default", 0);
             }
             if (!config.isSet("max-homes-msg")) {
                 config.set("max-homes-msg", "§4You have reached the maximum amount of saved homes!");
@@ -107,6 +122,18 @@ public class SetHomes extends JavaPlugin {
             if (!config.isSet("tp-cooldown-msg")) {
                 config.set("tp-cooldown-msg", "§4You must wait another %s second(s) before teleporting!");
             }
+            if (!config.isSet("auto-update")) {
+                config.set("auto-update", false);
+            }
+        }
+
+        if (config.isSet("max-homes")) {
+            if (config.getInt("max-homes") != 0) {
+                int maxHomes = config.getInt("max-homes");
+                Bukkit.getServer().getLogger().log(Level.SEVERE, "[SetHomes] We've detected you previously set the max homes within config.yml. We have updated the config and suggest \n" +
+                        "you read how to properly setup the config for your permission groups on the plugin page: https://dev.bukkit.org/projects/set-homes");
+                config.set("max-homes.default", maxHomes);
+            }
         }
 
         config.options().header(configHeader);
@@ -122,7 +149,7 @@ public class SetHomes extends JavaPlugin {
      * to handle the execution of these
      * commands
      */
-    public void registerCommands() {
+    private void registerCommands() {
         this.getCommand("sethome").setExecutor(new SetHome(this));
         this.getCommand("homes").setExecutor(new ListHomes(this));
         this.getCommand("delhome").setExecutor(new DeleteHome(this));
@@ -133,6 +160,16 @@ public class SetHomes extends JavaPlugin {
         this.getCommand("delhome-of").setExecutor(new DeleteHome(this));
         this.getCommand("uhome").setExecutor(new UpdateHome(this));
         this.getCommand("uhome-of").setExecutor(new UpdateHome(this));
+        this.getCommand("setmax").setExecutor(new SetMax(this));
+    }
+
+    /**
+     * Used to initialize the Permissions service with VaultAPI
+     */
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        perms = rsp.getProvider();
+        return perms != null;
     }
 
     /**
@@ -179,6 +216,22 @@ public class SetHomes extends JavaPlugin {
         Location home = new Location(world, h.getX(), h.getY(), h.getZ(), h.getYaw(), h.getPitch());
 
         return home;
+    }
+
+    /**
+     * Gets the Map of Groups to Max homes from the config
+     *
+     * @return a HashMap with the Group as the Key and the max number of homes as the value
+     */
+    public HashMap<String, Integer> getMaxHomes() {
+        HashMap<String, Integer> maxHomes = new HashMap<String, Integer>();
+        String maxHomesPath = "max-homes";
+        for (String id : config.getConfigurationSection(maxHomesPath).getKeys(false)) {
+            String path = maxHomesPath + "." + id;
+            maxHomes.put(id, config.getInt(maxHomesPath + "." + id));
+        }
+
+        return maxHomes;
     }
 
     /**
@@ -336,5 +389,14 @@ public class SetHomes extends JavaPlugin {
      */
     public void cancelTask(int taskId) {
         Bukkit.getScheduler().cancelTask(taskId);
+    }
+
+    /**
+     * Used to get the servers permissions plugin
+     *
+     * @return the permissions handler
+     */
+    public Permission getPermissions() {
+        return this.perms;
     }
 }
