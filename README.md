@@ -29,7 +29,7 @@ Simply place the downloaded jar from https://dev.bukkit.org/projects/set-homes i
 - **homes.delhome-of** - Give the ability to delete one of any players active homes
 - **homes.config_bypass** - A player given this permission can set homes in blacklisted worlds, and doesn't have to wait for cooldown or teleport delays. They will also be able to exceed the max home limit.
 - **homes.uhome** - Give the ability to update homes
-- **homes.uhome-of ** - Give the ability to update other players homes
+- **homes.uhome-of** - Give the ability to update other players homes
 - **homes.setmax** - Give the ability to set a maximum number of homes for a permission group
 
 # Default Config
