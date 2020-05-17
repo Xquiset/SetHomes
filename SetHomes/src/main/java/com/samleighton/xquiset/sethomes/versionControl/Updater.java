@@ -597,7 +597,7 @@ public class Updater {
                 // The file's name did not contain the string 'vVersion'
                 final String authorInfo = this.plugin.getDescription().getAuthors().isEmpty() ? "" : " (" + this.plugin.getDescription().getAuthors().get(0) + ")";
                 this.plugin.getLogger().warning("The author of this plugin" + authorInfo + " has misconfigured their Auto Update system");
-                this.plugin.getLogger().warning("File versions should follow the format 'PluginName vVERSION'");
+                this.plugin.getLogger().warning("File versions should follow the format 'PluginName VVERSION'");
                 this.plugin.getLogger().warning("Please notify the author of this error.");
                 this.result = Updater.UpdateResult.FAIL_NOVERSION;
                 return false;
@@ -635,7 +635,38 @@ public class Updater {
      * @return true if Updater should consider the remote version an update, false if not.
      */
     public boolean shouldUpdate(String localVersion, String remoteVersion) {
-        return !localVersion.equalsIgnoreCase(remoteVersion);
+        String[] localNums = localVersion.split("\\.");
+        String[] remoteNums = remoteVersion.split("\\.");
+        int[] local = new int[localNums.length];
+        int[] remote = new int[remoteNums.length];
+        boolean isUpdateable = false;
+
+        if (localNums.length != remoteNums.length) {
+            this.plugin.getLogger().severe("There was an error with the naming convention of the plugin, please notify the plugin author.");
+            return false;
+        }
+
+        for (int i = 0; i < local.length; i++) {
+            local[i] = Integer.parseInt(localNums[i]);
+            remote[i] = Integer.parseInt(remoteNums[i]);
+        }
+
+        int localVN1 = local[0];
+        int localVN2 = local[1];
+        int localVN3 = local[2];
+        int remoteVN1 = remote[0];
+        int remoteVN2 = remote[1];
+        int remoteVN3 = remote[2];
+
+        if (remoteVN1 > localVN1) {
+            isUpdateable = true;
+        } else if (remoteVN2 > localVN2) {
+            isUpdateable = true;
+        } else if (remoteVN3 > localVN3) {
+            isUpdateable = true;
+        }
+
+        return isUpdateable;
     }
 
     /**

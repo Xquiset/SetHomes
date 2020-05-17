@@ -19,8 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
-//Author: Xquiset
-//Plugin: SetHomes
+/**
+ * @author Xquiset
+ * @version 1.2.6
+ */
 public class SetHomes extends JavaPlugin {
 
     public FileConfiguration config;
@@ -28,6 +30,7 @@ public class SetHomes extends JavaPlugin {
     private Permission perms = null;
     private WorldBlacklist blacklist = new WorldBlacklist(this);
     private Homes homes = new Homes(this);
+    private String LOG_PREFIX = "[SetHomes] ";
     private String configHeader = StringUtils.repeat("-", 26)
             + "\n\tSetHomes Config\t\n" + StringUtils.repeat("-", 26) + "\n"
             + "Messages: \n\tYou can use chat colors in messages with this symbol §.\n"
@@ -50,7 +53,24 @@ public class SetHomes extends JavaPlugin {
         new EventListener(this);
         // Check if auto-updating is enabled
         if (config.getBoolean("auto-update")) {
-            new Updater(this, 312833, this.getFile(), Updater.UpdateType.DEFAULT, true);
+            getServer().getLogger().info(LOG_PREFIX + "Checking for updates...");
+
+            Updater updater = new Updater(this, 312833, this.getFile(), Updater.UpdateType.DEFAULT, true);
+            Updater.UpdateResult result = updater.getResult();
+
+            switch (result) {
+                case SUCCESS:
+                    getServer().getLogger().log(Level.INFO, LOG_PREFIX + "Staged update for next reload/restart");
+                    break;
+                case DISABLED:
+                    getServer().getLogger().log(Level.INFO, LOG_PREFIX + "Auto-Updating has been disabled, continuing...");
+                    break;
+                case NO_UPDATE:
+                    getServer().getLogger().log(Level.INFO, LOG_PREFIX + "No new version detected");
+                    break;
+            }
+        } else {
+            getServer().getLogger().info(LOG_PREFIX + "Auto-Updating has been disabled, continuing...");
         }
     }
 
@@ -123,14 +143,14 @@ public class SetHomes extends JavaPlugin {
                 config.set("tp-cooldown-msg", "§4You must wait another %s second(s) before teleporting!");
             }
             if (!config.isSet("auto-update")) {
-                config.set("auto-update", false);
+                config.set("auto-update", true);
             }
         }
 
         if (config.isSet("max-homes")) {
             if (config.getInt("max-homes") != 0) {
                 int maxHomes = config.getInt("max-homes");
-                Bukkit.getServer().getLogger().log(Level.SEVERE, "[SetHomes] We've detected you previously set the max homes within config.yml. We have updated the config and suggest \n" +
+                Bukkit.getServer().getLogger().log(Level.WARNING, "[SetHomes] We've detected you previously set the max homes within config.yml. We have updated the config and suggest \n" +
                         "you read how to properly setup the config for your permission groups on the plugin page: https://dev.bukkit.org/projects/set-homes");
                 config.set("max-homes.default", maxHomes);
             }

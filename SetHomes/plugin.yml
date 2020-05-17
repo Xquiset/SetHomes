@@ -10,7 +10,7 @@ commands:
     usage: /<command> <HomeName>
     aliases: h
   home-of:
-    description: Teleports the player sending the command to any players home. The default home name is 'unnamed_home'.
+    description: Teleports the player sending the command to any players home.
     usage: /<command> <PlayerName> <HomeName>
     aliases: ho
   homes:
