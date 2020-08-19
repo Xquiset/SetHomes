@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>LATEST</version><!--change this value depending on the version or use LATEST-->
+            <version>1.16.2-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>

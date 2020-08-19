@@ -39,7 +39,7 @@ public class SetHomes extends JavaPlugin {
             + "Time: \n\tAny time value is based in seconds.\n"
             + "Things to Note: \n\tSet any integer option to 0 for it to be ignored.\n"
             + "\tThe max-homes does not include the default un-named home.\n"
-            + "\tUse %s as the seconds variable in the cooldown message.\n";
+            + "\tUse %s as the seconds variable in the cool down message.\n";
 
     @Override
     public void onEnable() {

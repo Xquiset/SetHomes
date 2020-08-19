@@ -1,6 +1,6 @@
 name: SetHomes
 main: com.samleighton.xquiset.sethomes.SetHomes
-version: '1.2.6'
+version: '1.2.7'
 author: Xquiset
 depend:
   - Vault
