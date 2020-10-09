@@ -1,9 +1,9 @@
 name: SetHomes
 main: com.samleighton.xquiset.sethomes.SetHomes
-version: '1.2.7'
+version: '1.2.9'
+api-version: '1.16'
 author: Xquiset
-depend:
-  - Vault
+softdepend: [ Vault, LuckPerms ]
 commands:
   home:
     description: Teleports a player to their home.
@@ -105,4 +105,3 @@ permissions:
   homes.setmax:
     description: Allows the player to set the maximum number of homes for a permission group
     default: false
-      

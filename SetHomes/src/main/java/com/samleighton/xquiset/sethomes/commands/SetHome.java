@@ -3,7 +3,9 @@ package com.samleighton.xquiset.sethomes.commands;
 import com.samleighton.xquiset.sethomes.Home;
 import com.samleighton.xquiset.sethomes.SetHomes;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
+import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,16 +13,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class SetHome implements CommandExecutor {
     private final SetHomes pl;
     private final HashMap<String, Integer> maxHomesList;
-    private final Permission perms;
+    private final Permission vaultPerms;
+    private final LuckPerms luckPerms;
+    private final boolean permissions;
 
     public SetHome(SetHomes plugin) {
         pl = plugin;
         maxHomesList = pl.getMaxHomes();
-        perms = pl.getPermissions();
+        luckPerms = pl.getLuckPermsApi();
+        vaultPerms = pl.getVaultPermissions();
+        permissions = luckPerms != null || vaultPerms != null;
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -38,7 +45,7 @@ public class SetHome implements CommandExecutor {
             Location home = p.getLocation();
 
             // Check to make sure the home world is not blacklisted
-            if (pl.getBlacklistedWorlds().contains(home.getWorld().getName()) && !p.hasPermission("homes.config_bypass")) {
+            if (pl.getBlacklistedWorlds().contains(Objects.requireNonNull(home.getWorld()).getName()) && !p.hasPermission("homes.config_bypass")) {
                 ChatUtils.sendError(p, "This world does not allow the usage of homes!");
                 return true;
             }
@@ -58,6 +65,7 @@ public class SetHome implements CommandExecutor {
                     //Check if players amount of homes vs the config max homes allowed
                     if (pl.hasNamedHomes(uuid)) {
                         int maxHomes = getMaxHomesAllowed(p);
+                        Bukkit.getServer().getLogger().info("Max Homes: " + maxHomes);
                         if ((pl.getPlayersNamedHomes(uuid).size() >= maxHomes && maxHomes != 0) && !p.hasPermission("homes.config_bypass")) {
                             ChatUtils.sendInfo(p, pl.config.getString("max-homes-msg"));
                             return true;
@@ -106,11 +114,28 @@ public class SetHome implements CommandExecutor {
     private int getMaxHomesAllowed(Player p) {
         int maxHomes = 0;
 
-        for (String group : perms.getPlayerGroups(p)) {
-            for (String g : maxHomesList.keySet()) {
-                if (group.equalsIgnoreCase(g)) {
-                    if (maxHomesList.get(g) > maxHomes) {
-                        maxHomes = maxHomesList.get(g);
+        // Check to see if permissions are enabled
+        if (permissions) {
+            // First try luck perms
+            if (luckPerms != null) {
+                // Loop over groups found in config list
+                for (String group : maxHomesList.keySet()) {
+                    if (p.hasPermission("group." + group)) {
+                        int max_home_val = maxHomesList.get(group);
+                        if (maxHomes < max_home_val) {
+                            maxHomes = max_home_val;
+                        }
+                    }
+                }
+            } else {
+                // Loop over groups found by Vault
+                for (String group : vaultPerms.getPlayerGroups(p)) {
+                    for (String g : maxHomesList.keySet()) {
+                        if (group.equalsIgnoreCase(g)) {
+                            if (maxHomesList.get(g) > maxHomes) {
+                                maxHomes = maxHomesList.get(g);
+                            }
+                        }
                     }
                 }
             }

@@ -35,7 +35,6 @@ public class ListHomes implements CommandExecutor {
             if (args.length == 1) {
                 if (p.hasPermission("homes.gethomes")) {
                     //Create a offline player for the name they passed
-                    @SuppressWarnings({"deprecated"})
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
                     //Check to make sure the player has actually joined the server
                     if (offlinePlayer.hasPlayedBefore()) {
@@ -45,12 +44,11 @@ public class ListHomes implements CommandExecutor {
                         ChatUtils.sendError(p, "That user has never player here before!");
                         return true;
                     }
-                    return true;
                 } else {
                     //Send player message because they didn't have the proper permissions
                     ChatUtils.permissionError(p);
-                    return true;
                 }
+                return true;
             } else if (args.length == 0) {
                 //List the homes for the player who sent the command
                 listHomes(p);
@@ -74,7 +72,7 @@ public class ListHomes implements CommandExecutor {
         if (pl.hasUnknownHomes(uuid)) {
             //Gets the name of the world the home has been set in
             String world = pl.getPlayersUnnamedHome(uuid).getWorld().getName();
-            p.sendMessage(ChatColor.GOLD + "Default Home - World: " + world);
+            p.sendMessage(ChatColor.GOLD + "Default Home" + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world);
         }
 
         //Check to make sure the player has homes
@@ -86,9 +84,9 @@ public class ListHomes implements CommandExecutor {
                 //Gets the description for the home
                 String desc = pl.getPlayersNamedHomes(uuid).get(id).getDesc();
                 if (desc != null) {
-                    p.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world + " - Desc: " + desc);
+                    p.sendMessage(ChatColor.DARK_AQUA + "Name: " + ChatColor.WHITE + id + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "Desc: " + ChatColor.WHITE + desc);
                 } else {
-                    p.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world);
+                    p.sendMessage(ChatColor.DARK_AQUA + "Name: " + ChatColor.WHITE + id + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world);
                 }
             }
         }
@@ -119,9 +117,9 @@ public class ListHomes implements CommandExecutor {
                 //Gets the description for the home
                 String desc = pl.getPlayersNamedHomes(uuid).get(id).getDesc();
                 if (desc != null) {
-                    sender.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world + " - Desc: " + desc);
+                    sender.sendMessage(ChatColor.DARK_AQUA + "Name: " + ChatColor.WHITE + id + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "Desc: " + ChatColor.WHITE + desc);
                 } else {
-                    sender.sendMessage(ChatColor.DARK_GREEN + "Name: " + id + " - World: " + world);
+                    sender.sendMessage(ChatColor.DARK_AQUA + "Name: " + ChatColor.WHITE + id + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world);
                 }
             }
         }

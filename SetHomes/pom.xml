@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.samleighton.xquiset</groupId>
     <artifactId>SetHomes</artifactId>
-    <version>1.2.6-SNAPSHOT</version>
+    <version>1.2.9</version>
     <build>
         <plugins>
             <plugin>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.16.2-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
+            <version>LATEST</version><!--change this value depending on the version or use LATEST-->
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
@@ -38,11 +38,11 @@
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
         <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
+            <groupId>net.luckperms</groupId>
+            <artifactId>api</artifactId>
+            <version>5.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

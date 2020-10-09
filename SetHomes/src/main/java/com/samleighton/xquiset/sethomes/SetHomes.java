@@ -4,7 +4,7 @@ import com.samleighton.xquiset.sethomes.commands.*;
 import com.samleighton.xquiset.sethomes.configurations.Homes;
 import com.samleighton.xquiset.sethomes.configurations.WorldBlacklist;
 import com.samleighton.xquiset.sethomes.eventListeners.EventListener;
-import com.samleighton.xquiset.sethomes.versionControl.Updater;
+import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -17,21 +17,23 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 
 /**
  * @author Xquiset
- * @version 1.2.6
+ * @version 1.2.9
  */
 public class SetHomes extends JavaPlugin {
 
     public FileConfiguration config;
-    private FileConfiguration homesCfg, blacklistCfg;
-    private Permission perms = null;
-    private WorldBlacklist blacklist = new WorldBlacklist(this);
-    private Homes homes = new Homes(this);
-    private String LOG_PREFIX = "[SetHomes] ";
-    private String configHeader = StringUtils.repeat("-", 26)
+    private FileConfiguration homesCfg;
+    private Permission vaultPerms = null;
+    private LuckPerms luckPermsApi = null;
+    private final WorldBlacklist blacklist = new WorldBlacklist(this);
+    private final Homes homes = new Homes(this);
+    private final String LOG_PREFIX = "[SetHomes] ";
+    private final String configHeader = StringUtils.repeat("-", 26)
             + "\n\tSetHomes Config\t\n" + StringUtils.repeat("-", 26) + "\n"
             + "Messages: \n\tYou can use chat colors in messages with this symbol §.\n"
             + "\tI.E: §b will change any text after it to an aqua blue color.\n"
@@ -43,35 +45,20 @@ public class SetHomes extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        //Setup permission
-        setupPermissions();
+        //Try to setup LuckPerms
+        if (!setupLuckPerms()) {
+            //Setup Vault if no LuckPerms
+            if (!setupVaultPermissions()) {
+                Bukkit.getServer().getLogger().log(Level.WARNING, LOG_PREFIX + "Could not connect to a permissions plugin! Config setting \"max-homes\" will be ignored!");
+            }
+        }
+
         //Load the configuration files on enable or reload
         loadConfigurationFiles();
         //Initialize the command executors
         registerCommands();
         //Register event listener
         new EventListener(this);
-        // Check if auto-updating is enabled
-        if (config.getBoolean("auto-update")) {
-            getServer().getLogger().info(LOG_PREFIX + "Checking for updates...");
-
-            Updater updater = new Updater(this, 312833, this.getFile(), Updater.UpdateType.DEFAULT, true);
-            Updater.UpdateResult result = updater.getResult();
-
-            switch (result) {
-                case SUCCESS:
-                    getServer().getLogger().log(Level.INFO, LOG_PREFIX + "Staged update for next reload/restart");
-                    break;
-                case DISABLED:
-                    getServer().getLogger().log(Level.INFO, LOG_PREFIX + "Auto-Updating has been disabled, continuing...");
-                    break;
-                case NO_UPDATE:
-                    getServer().getLogger().log(Level.INFO, LOG_PREFIX + "No new version detected");
-                    break;
-            }
-        } else {
-            getServer().getLogger().info(LOG_PREFIX + "Auto-Updating has been disabled, continuing...");
-        }
     }
 
     //Unused
@@ -89,7 +76,7 @@ public class SetHomes extends JavaPlugin {
     private void loadConfigurationFiles() {
         //Get the configs
         homesCfg = getHomes().getConfig();
-        blacklistCfg = getBlacklist().getConfig();
+        FileConfiguration blacklistCfg = getBlacklist().getConfig();
 
         //Establish blacklist default config path
         if (!(blacklistCfg.isSet("blacklisted_worlds"))) {
@@ -142,9 +129,6 @@ public class SetHomes extends JavaPlugin {
             if (!config.isSet("tp-cooldown-msg")) {
                 config.set("tp-cooldown-msg", "§4You must wait another %s second(s) before teleporting!");
             }
-            if (!config.isSet("auto-update")) {
-                config.set("auto-update", true);
-            }
         }
 
         if (config.isSet("max-homes")) {
@@ -170,48 +154,81 @@ public class SetHomes extends JavaPlugin {
      * commands
      */
     private void registerCommands() {
-        this.getCommand("sethome").setExecutor(new SetHome(this));
-        this.getCommand("homes").setExecutor(new ListHomes(this));
-        this.getCommand("delhome").setExecutor(new DeleteHome(this));
-        this.getCommand("home").setExecutor(new GoHome(this));
-        this.getCommand("strike").setExecutor(new Strike(this));
-        this.getCommand("blacklist").setExecutor(new Blacklist(this));
-        this.getCommand("home-of").setExecutor(new GoHome(this));
-        this.getCommand("delhome-of").setExecutor(new DeleteHome(this));
-        this.getCommand("uhome").setExecutor(new UpdateHome(this));
-        this.getCommand("uhome-of").setExecutor(new UpdateHome(this));
-        this.getCommand("setmax").setExecutor(new SetMax(this));
+        Objects.requireNonNull(this.getCommand("sethome")).setExecutor(new SetHome(this));
+        Objects.requireNonNull(this.getCommand("homes")).setExecutor(new ListHomes(this));
+        Objects.requireNonNull(this.getCommand("delhome")).setExecutor(new DeleteHome(this));
+        Objects.requireNonNull(this.getCommand("home")).setExecutor(new GoHome(this));
+        Objects.requireNonNull(this.getCommand("strike")).setExecutor(new Strike(this));
+        Objects.requireNonNull(this.getCommand("blacklist")).setExecutor(new Blacklist(this));
+        Objects.requireNonNull(this.getCommand("home-of")).setExecutor(new GoHome(this));
+        Objects.requireNonNull(this.getCommand("delhome-of")).setExecutor(new DeleteHome(this));
+        Objects.requireNonNull(this.getCommand("uhome")).setExecutor(new UpdateHome(this));
+        Objects.requireNonNull(this.getCommand("uhome-of")).setExecutor(new UpdateHome(this));
+        Objects.requireNonNull(this.getCommand("setmax")).setExecutor(new SetMax(this));
     }
 
     /**
      * Used to initialize the Permissions service with VaultAPI
+     *
+     * @return true if Vault was setup, false otherwise
      */
-    private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
-        perms = rsp.getProvider();
-        return perms != null;
+    private boolean setupVaultPermissions() {
+        try {
+            // Attempt to get service provider
+            RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+
+            // Service provider was successfully obtained
+            if (rsp != null) {
+                vaultPerms = rsp.getProvider();
+                Bukkit.getServer().getLogger().info(LOG_PREFIX + "Hooked into Vault!");
+                return true;
+            }
+        } catch (NoClassDefFoundError ignored) {
+            Bukkit.getServer().getLogger().info(LOG_PREFIX + "Vault was not found.");
+        }
+        return false;
     }
 
     /**
+     * Used to initialize the Permissions service with LuckPermsAPI
+     *
+     * @return true if LuckPerms was setup, false otherwise
+     */
+    private boolean setupLuckPerms() {
+        try {
+            // Attempt to get service provider
+            RegisteredServiceProvider<LuckPerms> rsp = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+
+            // Service provider was successfully obtained
+            if (rsp != null) {
+                luckPermsApi = rsp.getProvider();
+                Bukkit.getServer().getLogger().info(LOG_PREFIX + "Hooked into LuckPerms!");
+                return true;
+            }
+        } catch (NoClassDefFoundError ignored) {
+            Bukkit.getServer().getLogger().info(LOG_PREFIX + "Luck perms was not found! Reverting to vault...");
+        }
+
+        return false;
+    }
+
+    /**
+     * Used to create the map of homes for a given player UUID
+     *
      * @param uuid of the player we're attempting to get homes for
      * @return a hashmap of all the players homes
      */
     public HashMap<String, Home> getPlayersNamedHomes(String uuid) {
-        HashMap<String, Home> playersNamedHomes = new HashMap<String, Home>();
+        HashMap<String, Home> playersNamedHomes = new HashMap<>();
         String homesPath = "allNamedHomes." + uuid;
         homesCfg = getHomes().getConfig();
 
         //Loop through the players home list and create a hash map with the home names as a key and home as value
-        for (String id : homesCfg.getConfigurationSection(homesPath).getKeys(false)) {
+        for (String id : Objects.requireNonNull(homesCfg.getConfigurationSection(homesPath)).getKeys(false)) {
             String path = homesPath + "." + id + ".";
-            World world = getServer().getWorld(homesCfg.getString(path + ".world"));
-            double x = homesCfg.getDouble(path + ".x");
-            double y = homesCfg.getDouble(path + ".y");
-            double z = homesCfg.getDouble(path + ".z");
-            float pitch = Float.parseFloat(homesCfg.getString(path + ".pitch"));
-            float yaw = Float.parseFloat(homesCfg.getString(path + ".yaw"));
 
-            Location home = new Location(world, x, y, z, yaw, pitch);
+            // Create the home object so we can add the description to it
+            Location home = getHomeLocaleFromConfig(path);
             Home h = new Home(home);
 
             //Check if there is a desc set
@@ -226,16 +243,15 @@ public class SetHomes extends JavaPlugin {
     }
 
     /**
+     * Used to get the players named home as a location from their map
+     *
      * @param uuid     player for which to get the home from
      * @param homeName the name of the home to create the location for
      * @return location of the players named home
      */
     public Location getNamedHomeLocal(String uuid, String homeName) {
         Home h = getPlayersNamedHomes(uuid).get(homeName);
-        World world = getServer().getWorld(h.getWorld());
-        Location home = new Location(world, h.getX(), h.getY(), h.getZ(), h.getYaw(), h.getPitch());
-
-        return home;
+        return h.toLocation();
     }
 
     /**
@@ -244,10 +260,10 @@ public class SetHomes extends JavaPlugin {
      * @return a HashMap with the Group as the Key and the max number of homes as the value
      */
     public HashMap<String, Integer> getMaxHomes() {
-        HashMap<String, Integer> maxHomes = new HashMap<String, Integer>();
+        HashMap<String, Integer> maxHomes = new HashMap<>();
         String maxHomesPath = "max-homes";
-        for (String id : config.getConfigurationSection(maxHomesPath).getKeys(false)) {
-            String path = maxHomesPath + "." + id;
+
+        for (String id : Objects.requireNonNull(config.getConfigurationSection(maxHomesPath)).getKeys(false)) {
             maxHomes.put(id, config.getInt(maxHomesPath + "." + id));
         }
 
@@ -264,24 +280,21 @@ public class SetHomes extends JavaPlugin {
     }
 
     /**
+     * Used to save a named home into the config
+     *
      * @param uuid of the player
-     * @param uuid player to save home for
      * @param home object of the home object to save
      */
     public void saveNamedHome(String uuid, Home home) {
         String path = "allNamedHomes." + uuid + "." + home.getHomeName();
-        homesCfg = getHomes().getConfig();
-        homesCfg.set(path + ".world", home.getWorld());
-        homesCfg.set(path + ".x", home.getX());
-        homesCfg.set(path + ".y", home.getY());
-        homesCfg.set(path + ".z", home.getZ());
-        homesCfg.set(path + ".pitch", home.getPitch());
-        homesCfg.set(path + ".yaw", home.getYaw());
+        saveHomeToConfig(home, path);
         homesCfg.set(path + ".desc", home.getDesc());
         getHomes().save();
     }
 
     /**
+     * Used to delete a players named home from the config
+     *
      * @param uuid     of the player to get home list for
      * @param homeName name of home to delete from list
      */
@@ -293,6 +306,8 @@ public class SetHomes extends JavaPlugin {
     }
 
     /**
+     * Used to get the location object of an un-named home
+     *
      * @param uuid of the player to get a home for
      * @return the home to teleport the player to
      */
@@ -300,19 +315,14 @@ public class SetHomes extends JavaPlugin {
         //Grabs all the data from the configuration file
         String path = "unknownHomes." + uuid;
         homesCfg = getHomes().getConfig();
-        World world = getServer().getWorld(homesCfg.getString(path + ".world"));
-        double x = homesCfg.getDouble(path + ".x");
-        double y = homesCfg.getDouble(path + ".y");
-        double z = homesCfg.getDouble(path + ".z");
-        float pitch = Float.parseFloat(homesCfg.getString(path + ".pitch"));
-        float yaw = Float.parseFloat(homesCfg.getString(path + ".yaw"));
 
-        Location home = new Location(world, x, y, z, yaw, pitch);
-
-        return home;
+        // Return the home as a location
+        return getHomeLocaleFromConfig(path);
     }
 
     /**
+     * Used to check if a player has un-named homes
+     *
      * @param uuid of the player we're checking unnamed homes for
      * @return true || false
      */
@@ -322,12 +332,25 @@ public class SetHomes extends JavaPlugin {
     }
 
     /**
+     * Used to save the Unknown home to the config
+     *
      * @param uuid of the player to save a home for
      * @param home to save
      */
     public void saveUnknownHome(String uuid, Home home) {
         //Saves the variables to construct a home location to the configuration file
         String path = "unknownHomes." + uuid;
+        saveHomeToConfig(home, path);
+        getHomes().save();
+    }
+
+    /**
+     * Helper method for saving a home object to the config file
+     *
+     * @param home, The home object to save
+     * @param path, The path in the config to save the home
+     */
+    private void saveHomeToConfig(Home home, String path) {
         homesCfg = getHomes().getConfig();
         homesCfg.set(path + ".world", home.getWorld());
         homesCfg.set(path + ".x", home.getX());
@@ -335,10 +358,28 @@ public class SetHomes extends JavaPlugin {
         homesCfg.set(path + ".z", home.getZ());
         homesCfg.set(path + ".pitch", home.getPitch());
         homesCfg.set(path + ".yaw", home.getYaw());
-        getHomes().save();
     }
 
     /**
+     * Helper method to extract a homes location from the config file
+     *
+     * @param path, The path to the home data
+     * @return the location object of the home
+     */
+    private Location getHomeLocaleFromConfig(String path) {
+        World world = getServer().getWorld(Objects.requireNonNull(homesCfg.getString(path + ".world")));
+        double x = homesCfg.getDouble(path + ".x");
+        double y = homesCfg.getDouble(path + ".y");
+        double z = homesCfg.getDouble(path + ".z");
+        float pitch = Float.parseFloat(Objects.requireNonNull(homesCfg.getString(path + ".pitch")));
+        float yaw = Float.parseFloat(Objects.requireNonNull(homesCfg.getString(path + ".yaw")));
+
+        return new Location(world, x, y, z, pitch, yaw);
+    }
+
+    /**
+     * Remove an unknown home from the config
+     *
      * @param uuid of the player to delete default home for
      */
     public void deleteUnknownHome(String uuid) {
@@ -405,18 +446,27 @@ public class SetHomes extends JavaPlugin {
     /**
      * Used to cancel a bukkit runnable task
      *
-     * @param taskId
+     * @param taskId, The id of the task to cancel
      */
     public void cancelTask(int taskId) {
         Bukkit.getScheduler().cancelTask(taskId);
     }
 
     /**
-     * Used to get the servers permissions plugin
+     * Used to get the servers permissions
      *
      * @return the permissions handler
      */
-    public Permission getPermissions() {
-        return this.perms;
+    public Permission getVaultPermissions() {
+        return this.vaultPerms;
+    }
+
+    /**
+     * Used to obtain the instance ot LuckPerms API
+     *
+     * @return instance of LuckPerms
+     */
+    public LuckPerms getLuckPermsApi() {
+        return this.luckPermsApi;
     }
 }
