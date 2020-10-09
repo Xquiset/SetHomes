@@ -6,7 +6,7 @@ Simply place the downloaded jar into your server plugins folder.
 **NOTE! For "MAX HOMES" to work you must meet one of the soft dependencies below, and setup groups for the respective permissions plugin. You will then also need to setup max-homes in the config.yml. An example max-homes setup can be found below the default config**
 
 # Soft Dependencies
-- [LuckPerms](https://dev.bukkit.org/linkout?remoteUrl=https%253a%252f%252fluckperms.net%252fdownload)
+- [LuckPerms](https://luckperms.net/download)
 - [Vault plugin](https://dev.bukkit.org/projects/vault), as well as, a permissions plugin supported by Vault
 
 # Commands
@@ -75,7 +75,7 @@ max-homes:
 
 # F.A.Q
 - **Q: How can I give players permission to set named homes?**
-  **A:** You will need to install a permission plugin, either [LuckPerms](https://dev.bukkit.org/linkout?remoteUrl=https%253a%252f%252fluckperms.net%252fdownload) or [Vault](https://dev.bukkit.org/projects/vault) & a Vault supported permissions plugin then apply the permission "homes.sethome" to the (player/group) you would like to allow the usage of multiple homes for.
+  **A:** You will need to install a permission plugin, either [LuckPerms](https://luckperms.net/download) or [Vault](https://dev.bukkit.org/projects/vault) & a Vault supported permissions plugin then apply the permission "homes.sethome" to the (player/group) you would like to allow the usage of multiple homes for.
   
 # Change Log
 - Added support for Minecraft/Craftbukkit V1.16.3.
