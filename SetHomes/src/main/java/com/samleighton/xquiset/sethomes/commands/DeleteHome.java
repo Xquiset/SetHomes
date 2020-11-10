@@ -112,7 +112,7 @@ public class DeleteHome implements CommandExecutor {
                 } else {
                     //Perform deletion of the named home
                     pl.deleteNamedHome(uuid, homeName);
-                    ChatUtils.sendSuccess(p, "You have deleted the \'" + homeName + "\' home for player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.GOLD + "!");
+                    ChatUtils.sendSuccess(p, "You have deleted the '" + homeName + "' home for player " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.GOLD + "!");
                     return true;
                 }
             }

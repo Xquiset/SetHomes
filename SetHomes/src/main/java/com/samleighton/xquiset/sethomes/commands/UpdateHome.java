@@ -107,7 +107,7 @@ public class UpdateHome implements CommandExecutor {
                         pl.saveNamedHome(uuid, newHome);
 
                         // Notify the player of the updated home success
-                        ChatUtils.sendSuccess(p, "Your home \'" + newHome.getHomeName() + "\' has been updated!");
+                        ChatUtils.sendSuccess(p, "Your home '" + newHome.getHomeName() + "' has been updated!");
                         return true;
                     }
                 }
@@ -180,7 +180,7 @@ public class UpdateHome implements CommandExecutor {
                 pl.saveNamedHome(uuid, newHome);
 
                 // Notify the player of the updated home success
-                ChatUtils.sendSuccess(p, "You have updated the home \'" + newHome.getHomeName() + "\' for the player named " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + "!");
+                ChatUtils.sendSuccess(p, "You have updated the home '" + newHome.getHomeName() + "' for the player named " + ChatColor.WHITE + ChatColor.BOLD + args[0] + ChatColor.DARK_RED + "!");
                 return true;
             }
         }

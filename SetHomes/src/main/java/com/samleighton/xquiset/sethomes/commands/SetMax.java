@@ -15,10 +15,10 @@ public class SetMax implements CommandExecutor {
         pl = plugin;
     }
 
-
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getLabel().equalsIgnoreCase("setmax")) {
             final int l = args.length;
+            final boolean arg_count_check = l != 2;
             String group;
             int homeNum;
             if (sender instanceof Player) {
@@ -32,7 +32,7 @@ public class SetMax implements CommandExecutor {
                 }
 
                 // Test to ensure the proper number of arguments were passed
-                if (l != 2) {
+                if (arg_count_check) {
                     ChatUtils.sendError(p, "Wrong number of arguments passed!");
                     return false;
                 }
@@ -44,14 +44,14 @@ public class SetMax implements CommandExecutor {
                 try {
                     homeNum = Integer.parseInt(args[1]);
                     setMaxHomes(group, homeNum);
-                    ChatUtils.sendError(p, "The group you entered does not exist!");
+                    ChatUtils.sendSuccess(sender, "You have set the max homes to be '" + homeNum + "' for the group '" + group + "'!");
                 } catch (NumberFormatException e) {
                     ChatUtils.sendError(p, "The second argument must be a number!");
                     return false;
                 }
             } else {
                 // Test to ensure the proper number of arguments were passed
-                if (l != 2) {
+                if (arg_count_check) {
                     ChatUtils.sendError(sender, "Wrong number of arguments passed!");
                     return false;
                 }

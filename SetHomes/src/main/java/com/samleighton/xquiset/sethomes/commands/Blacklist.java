@@ -55,7 +55,7 @@ public class Blacklist implements CommandExecutor {
                     ChatUtils.permissionError(p);
                     return true;
                 }
-            } else if (args.length >= 1) {
+            } else {
                 //Adding a world to the blacklist
                 if (args[0].equalsIgnoreCase("add")) {
                     //Check for proper permissions
@@ -70,7 +70,7 @@ public class Blacklist implements CommandExecutor {
                                 pl.getBlacklist().getConfig().set("blacklisted_worlds", temp);
                                 pl.getBlacklist().save();
 
-                                ChatUtils.sendSuccess(p, "You have added the world \'" + args[1] + "\' to the blacklist!");
+                                ChatUtils.sendSuccess(p, "You have added the world '" + args[1] + "' to the blacklist!");
                                 return true;
                             } else {
                                 ChatUtils.sendError(p, "There was no world found by that name!");
@@ -99,7 +99,7 @@ public class Blacklist implements CommandExecutor {
                                 pl.getBlacklist().getConfig().set("blacklisted_worlds", temp);
                                 pl.getBlacklist().save();
 
-                                ChatUtils.sendSuccess(p, "You have removed the world \'" + args[1] + "\' from the blacklist!");
+                                ChatUtils.sendSuccess(p, "You have removed the world '" + args[1] + "' from the blacklist!");
                                 return true;
                             } else {
                                 ChatUtils.sendError(p, "There was no world by that name found in the blacklist!");
@@ -115,7 +115,7 @@ public class Blacklist implements CommandExecutor {
                         return true;
                     }
                 } else {
-                    ChatUtils.sendError(p, "There is no \'" + args[0] + "\' blacklist action!");
+                    ChatUtils.sendError(p, "There is no '" + args[0] + "' blacklist action!");
                     return false;
                 }
             }

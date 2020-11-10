@@ -13,7 +13,7 @@ import java.util.logging.Level;
 
 public class Homes extends Config {
 
-    private SetHomes pl;
+    private final SetHomes pl;
     private FileConfiguration homes = null;
     private File homesFile = null;
 
@@ -35,10 +35,8 @@ public class Homes extends Config {
         // Look for defaults in the jar
         try {
             Reader defConfigStream = new FileReader(homesFile);
-            if (defConfigStream != null) {
-                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-                homes.setDefaults(defConfig);
-            }
+            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+            homes.setDefaults(defConfig);
         } catch (IOException e) {
             e.printStackTrace();
         }

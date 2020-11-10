@@ -19,9 +19,10 @@ import java.util.Map;
 public class GoHome implements CommandExecutor, Listener {
 
     private final SetHomes pl;
-    private int taskId, cooldown;
-    private Map<String, Long> cooldownList = new HashMap<String, Long>();
-    private boolean cancelOnMove;
+    private int taskId;
+    private final int cooldown;
+    private final Map<String, Long> cooldownList = new HashMap<>();
+    private final boolean cancelOnMove;
     private Location locale = null;
     private Player p;
 
@@ -143,7 +144,6 @@ public class GoHome implements CommandExecutor, Listener {
                                 p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
                                 //Add player to cooldown list
                                 cooldownList.put(uuid, System.currentTimeMillis());
-                                return;
                             } else {
                                 //Send title to player every second
                                 p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
@@ -196,7 +196,6 @@ public class GoHome implements CommandExecutor, Listener {
                             p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
                             //Add player to cooldown list
                             cooldownList.put(uuid, System.currentTimeMillis());
-                            return;
                         } else {
                             //Send title every second
                             p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 5, 5, 5);
@@ -256,7 +255,6 @@ public class GoHome implements CommandExecutor, Listener {
                                 p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
                                 //Add player to cooldown list
                                 cooldownList.put(p.getUniqueId().toString(), System.currentTimeMillis());
-                                return;
                             } else {
                                 //Send title every second
                                 p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 0, 20, 0);
@@ -305,7 +303,6 @@ public class GoHome implements CommandExecutor, Listener {
                             p.playNote(p.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
                             //Add player to cooldown list
                             cooldownList.put(p.getUniqueId().toString(), System.currentTimeMillis());
-                            return;
                         } else {
                             //Send the player a title every second
                             p.sendTitle(ChatColor.GOLD + "Teleporting in " + delay + "...", null, 5, 5, 5);

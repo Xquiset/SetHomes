@@ -16,6 +16,7 @@ import java.util.UUID;
 public class ListHomes implements CommandExecutor {
 
     private final SetHomes pl;
+    private final String filler = StringUtils.repeat("-", 53);
 
     public ListHomes(SetHomes plugin) {
         this.pl = plugin;
@@ -62,20 +63,14 @@ public class ListHomes implements CommandExecutor {
         return false;
     }
 
-    private void listHomes(Player p) {
-        String uuid = p.getUniqueId().toString();
-        String filler = StringUtils.repeat("-", 53);
-
-        p.sendMessage(ChatColor.BOLD + "Your Currently Set Homes");
-        p.sendMessage(filler);
-        //Tell the player if they have a default home set or not
-        if (pl.hasUnknownHomes(uuid)) {
-            //Gets the name of the world the home has been set in
-            String world = pl.getPlayersUnnamedHome(uuid).getWorld().getName();
-            p.sendMessage(ChatColor.GOLD + "Default Home" + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world);
-        }
-
-        //Check to make sure the player has homes
+    /**
+     * Used to check if a player has named homes, and will also send the
+     * homes list if there are any homes.
+     *
+     * @param p,    the player object to check homes for
+     * @param uuid, the uuid of the player object as a string
+     */
+    private void checkForNamedHomes(Player p, String uuid) {
         if (pl.hasNamedHomes(uuid)) {
             //Print the home with its description to the player
             for (String id : pl.getPlayersNamedHomes(uuid).keySet()) {
@@ -84,8 +79,10 @@ public class ListHomes implements CommandExecutor {
                 //Gets the description for the home
                 String desc = pl.getPlayersNamedHomes(uuid).get(id).getDesc();
                 if (desc != null) {
+                    //Send message with description
                     p.sendMessage(ChatColor.DARK_AQUA + "Name: " + ChatColor.WHITE + id + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "Desc: " + ChatColor.WHITE + desc);
                 } else {
+                    //Send message without description
                     p.sendMessage(ChatColor.DARK_AQUA + "Name: " + ChatColor.WHITE + id + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world);
                 }
             }
@@ -93,10 +90,40 @@ public class ListHomes implements CommandExecutor {
         p.sendMessage(filler);
     }
 
-    //List homes for one player to another
+    /**
+     * Used to generate a list of homes for the commend sender.
+     * Will also print the list to the player in a nice format
+     *
+     * @param p, the player sending the command
+     */
+    private void listHomes(Player p) {
+        //The uuid string of the player p
+        String uuid = p.getUniqueId().toString();
+
+        //Tell the player if they have a default home set or not
+        if (pl.hasUnknownHomes(uuid)) {
+            //Begin listing homes for the player
+            p.sendMessage(ChatColor.BOLD + "Your Currently Set Homes");
+            p.sendMessage(filler);
+
+            //Gets the name of the world the home has been set in
+            String world = pl.getPlayersUnnamedHome(uuid).getWorld().getName();
+            p.sendMessage(ChatColor.GOLD + "Default Home" + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world);
+        }
+
+        //Check to make sure the player has homes
+        checkForNamedHomes(p, uuid);
+    }
+
+    /**
+     * Used to generate a list of homes of another player
+     * for the command sender. Typically used by admins
+     *
+     * @param playerUUID, the UUID of the player who's homes we're trying to retrieve
+     * @param sender,     the sender of the command to print the list to
+     */
     private void listHomes(UUID playerUUID, Player sender) {
         String uuid = playerUUID.toString();
-        String filler = StringUtils.repeat("-", 53);
 
         sender.sendMessage(ChatColor.BOLD + "Homes currently set for the player - " + Bukkit.getOfflinePlayer(playerUUID).getName());
         sender.sendMessage(filler);
@@ -109,21 +136,7 @@ public class ListHomes implements CommandExecutor {
         }
 
         //Check to make sure the player has homes
-        if (pl.hasNamedHomes(uuid)) {
-            //Print the home with its description to the player
-            for (String id : pl.getPlayersNamedHomes(uuid).keySet()) {
-                //Gets the name of the world the home has been set in
-                String world = pl.getPlayersNamedHomes(uuid).get(id).getWorld();
-                //Gets the description for the home
-                String desc = pl.getPlayersNamedHomes(uuid).get(id).getDesc();
-                if (desc != null) {
-                    sender.sendMessage(ChatColor.DARK_AQUA + "Name: " + ChatColor.WHITE + id + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "Desc: " + ChatColor.WHITE + desc);
-                } else {
-                    sender.sendMessage(ChatColor.DARK_AQUA + "Name: " + ChatColor.WHITE + id + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world);
-                }
-            }
-        }
-        sender.sendMessage(filler);
+        checkForNamedHomes(sender, uuid);
     }
 
 }

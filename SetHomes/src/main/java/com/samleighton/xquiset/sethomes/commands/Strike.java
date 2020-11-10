@@ -16,10 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Strike implements CommandExecutor {
-    private final SetHomes setHomes;
 
     public Strike(SetHomes plugin) {
-        this.setHomes = plugin;
+        //Needed so that we can create an object for the command executor in onEnable
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -33,7 +32,7 @@ public class Strike implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("strike")) {
             Player p = (Player) sender;
             if (p.hasPermission("homes.strike")) {
-                PlayerInventory pInvetory = p.getInventory();
+                PlayerInventory pInventory = p.getInventory();
                 ItemStack fishingRod = new ItemStack(Material.FISHING_ROD, 1);
                 ItemMeta rodMeta = fishingRod.getItemMeta();
                 List<String> rodLore = new ArrayList<String>();
@@ -45,12 +44,11 @@ public class Strike implements CommandExecutor {
 
                 fishingRod.setItemMeta(rodMeta);
 
-                pInvetory.addItem(fishingRod);
-                return true;
+                pInventory.addItem(fishingRod);
             } else {
                 ChatUtils.permissionError(p);
-                return true;
             }
+            return true;
         }
 
         return false;
