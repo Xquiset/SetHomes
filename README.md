@@ -2,7 +2,12 @@
 A simple homes plugin with the ability to create, delete, and teleport to many different homes. Have the ability to control a blacklist of worlds in which players will be restricted from setting homes. Using the config you can control setting such as a maximum number of homes, teleport cooldown, teleport delay, and their respective messages that get display to the user.
 
 # Installation
-Simply place the downloaded jar from https://dev.bukkit.org/projects/set-homes into your server plugins folder. As of plugin version 1.2.6 you will also need to download the Vault plugin since it is a dependency. It may be found here: https://dev.bukkit.org/projects/vault. This dependency is necessary for the maximum homes functionality to work, as vault hooks into various permission plugins. 
+Simply place the downloaded jar into your server plugins folder.
+**NOTE! For "MAX HOMES" to work you must meet one of the soft dependencies below, and setup groups for the respective permissions plugin. You will then also need to setup max-homes in the config.yml. An example max-homes setup can be found below the default config**
+
+# Soft Dependencies
+- [LuckPerms](https://luckperms.net/download)
+- [Vault plugin](https://dev.bukkit.org/projects/vault), as well as, a permissions plugin supported by Vault
 
 # Commands
 - **/sethome [HomeName] [HomeDescription]** - This command will allow the issuer to set a home with a given name and description of their choosing at your standing location. If no name and description are given then you will set a default home at your standing location.
@@ -58,3 +63,28 @@ tp-cancelOnMove-msg: §4Movement detected! Teleporting has been cancelled!
 tp-cooldown-msg: §4You must wait another %s second(s) before teleporting!
 auto-update: true
 ```
+
+# Example Max-Homes setup
+```yaml
+max-homes:
+  default: 1
+  free: 3
+  subscriber: 5
+  admin: 0
+```
+
+# F.A.Q
+- **Q: How can I give players permission to set named homes?**
+  **A:** You will need to install a permission plugin, either [LuckPerms](https://luckperms.net/download) or [Vault](https://dev.bukkit.org/projects/vault) & a Vault supported permissions plugin then apply the permission "homes.sethome" to the (player/group) you would like to allow the usage of multiple homes for.
+  
+# Change Log
+- Added support for Minecraft/Craftbukkit V1.16.3.
+- Added support for LuckPerms permission plugin
+- Made LuckPerms default permission plugin, and set Vault as a rollback before disabling all together
+- Changed colors, and layout of list homes message to be more readable
+- Fixed error, where SetHomes could not load without Vault
+- Removed auto-updater functionality because it was not working properly
+- Added server log messages for permissions plugin hooking, and no perms plugin found
+
+# Donations
+I work on this plugin with the little amount of free time that I have. Please feel free to donate via [PayPal](https://www.paypal.com/donate/?return=https://dev.bukkit.org/projects/312833&cn=Add+special+instructions+to+the+addon+author()&business=sam%40samleighton.us&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted&cancel_return=https://dev.bukkit.org/projects/312833&lc=US&item_name=Set+Homes+(from+bukkit.org)&cmd=_donations&rm=1&no_shipping=1&currency_code=USD) any amount you desire to show your support, and help me stay motivated to keep this project going. Thank You!
