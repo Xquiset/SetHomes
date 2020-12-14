@@ -77,8 +77,18 @@ public class SetHome implements CommandExecutor {
                         }
                     }
 
-                    //Set the home name to the given name
-                    playersHome.setHomeName(args[0]);
+                    // Cleanse the input argument of any non alphanumeric characters
+                    String homeName = args[0].replaceAll("[^a-zA-Z0-9]", "");
+
+                    // Ensure that after cleansing the homename still has a value
+                    if (homeName.length() > 0) {
+                        // Set the home name to the given name
+                        playersHome.setHomeName(homeName);
+                    } else {
+                        ChatUtils.sendError(p, "Please use a valid home name! Only a-z & 0-9 characters are allowed.");
+                        return true;
+                    }
+
 
                     //Build the description as a combination of all other arguments passed
                     StringBuilder desc = new StringBuilder();

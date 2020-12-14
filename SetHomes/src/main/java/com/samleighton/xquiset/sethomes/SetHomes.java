@@ -22,7 +22,7 @@ import java.util.logging.Level;
 
 /**
  * @author Xquiset
- * @version 1.2.9
+ * @version 1.3.0
  */
 public class SetHomes extends JavaPlugin {
 

@@ -125,7 +125,6 @@ public class Home {
         this.desc = desc;
     }
 
-
     /**
      * @return the homeName
      */
@@ -144,10 +143,15 @@ public class Home {
      * @return the home as a location object
      */
     public Location toLocation() {
-        return new Location(Bukkit.getServer().getWorld(getWorld()), getX(), getY(), getZ(), getPitch(), getYaw());
+        return new Location(Bukkit.getServer().getWorld(this.getWorld()), getX(), getY(), getZ(), getPitch(), getYaw());
     }
 
+    /**
+     * @return return the home object as a string
+     */
     public String toString() {
-        return toLocation().toString();
+        return "Home Name: " + getHomeName() + "\n" +
+                "Home Desc: " + getDesc() + "\n" +
+                "Location: " + toLocation().toString() + "\n";
     }
 }
