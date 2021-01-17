@@ -1,6 +1,7 @@
 package com.samleighton.xquiset.sethomes;
 
 import com.samleighton.xquiset.sethomes.commands.*;
+import com.samleighton.xquiset.sethomes.configurations.Database;
 import com.samleighton.xquiset.sethomes.configurations.Homes;
 import com.samleighton.xquiset.sethomes.configurations.WorldBlacklist;
 import com.samleighton.xquiset.sethomes.eventListeners.EventListener;
@@ -22,7 +23,7 @@ import java.util.logging.Level;
 
 /**
  * @author Xquiset
- * @version 1.3.0
+ * @version 1.3.1
  */
 public class SetHomes extends JavaPlugin {
 
@@ -32,7 +33,8 @@ public class SetHomes extends JavaPlugin {
     private LuckPerms luckPermsApi = null;
     private final WorldBlacklist blacklist = new WorldBlacklist(this);
     private final Homes homes = new Homes(this);
-    private final String LOG_PREFIX = "[SetHomes] ";
+    private final Database db = new Database(this);
+    public final String LOG_PREFIX = "[SetHomes] ";
     private final String configHeader = StringUtils.repeat("-", 26)
             + "\n\tSetHomes Config\t\n" + StringUtils.repeat("-", 26) + "\n"
             + "Messages: \n\tYou can use chat colors in messages with this symbol §.\n"
@@ -77,6 +79,7 @@ public class SetHomes extends JavaPlugin {
         //Get the configs
         homesCfg = getHomes().getConfig();
         FileConfiguration blacklistCfg = getBlacklist().getConfig();
+        FileConfiguration dbCfg = getDb().getConfig();
 
         //Establish blacklist default config path
         if (!(blacklistCfg.isSet("blacklisted_worlds"))) {
@@ -96,6 +99,20 @@ public class SetHomes extends JavaPlugin {
         //Save defaults
         homesCfg.options().copyDefaults(true);
         getHomes().save();
+
+        //Establish database default paths
+        if (!(dbCfg.isSet("enabled") || dbCfg.isSet("host") || dbCfg.isSet("database") || dbCfg.isSet("username") || dbCfg.isSet("password") || dbCfg.isSet("port"))) {
+            dbCfg.addDefault("enabled", false);
+            dbCfg.addDefault("host", "localhost");
+            dbCfg.addDefault("database", "sethomes");
+            dbCfg.addDefault("username", "root");
+            dbCfg.addDefault("password", "root");
+            dbCfg.addDefault("port", 3306);
+        }
+
+        //Save database defaults
+        dbCfg.options().copyDefaults(true);
+        getDb().save();
 
         //Copy homes from old config if they were set and delete them from default config
         config = getConfig();
@@ -441,6 +458,15 @@ public class SetHomes extends JavaPlugin {
                 saveConfig();
             }
         }
+    }
+
+    /**
+     * Used to get the Database configuration parameters
+     *
+     * @return the Database Configuration object
+     */
+    public Database getDb() {
+        return db;
     }
 
     /**
