@@ -1,3 +1,2 @@
-1. Add options for database support
-2. Make titles and sounds configurable
-3. Create ability to delete all homes in a world
+1. Make titles and sounds configurable
+2. Create ability to delete all homes in a world
