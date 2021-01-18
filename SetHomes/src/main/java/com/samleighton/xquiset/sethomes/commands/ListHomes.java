@@ -100,12 +100,12 @@ public class ListHomes implements CommandExecutor {
         //The uuid string of the player p
         String uuid = p.getUniqueId().toString();
 
+        //Begin listing homes for the player
+        p.sendMessage(ChatColor.BOLD + "Your Currently Set Homes");
+        p.sendMessage(filler);
+
         //Tell the player if they have a default home set or not
         if (pl.hasUnknownHomes(uuid)) {
-            //Begin listing homes for the player
-            p.sendMessage(ChatColor.BOLD + "Your Currently Set Homes");
-            p.sendMessage(filler);
-
             //Gets the name of the world the home has been set in
             String world = pl.getPlayersUnnamedHome(uuid).getWorld().getName();
             p.sendMessage(ChatColor.GOLD + "Default Home" + ChatColor.DARK_GRAY + " | " + ChatColor.DARK_AQUA + "World: " + ChatColor.WHITE + world);

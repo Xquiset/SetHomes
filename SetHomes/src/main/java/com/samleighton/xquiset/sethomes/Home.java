@@ -27,6 +27,17 @@ public class Home {
         setPitch(l.getPitch());
     }
 
+    public Home(String homeName, String world, double x, double y, double z, float pitch, float yaw, String homeDesc) {
+        setHomeName(homeName);
+        setWorld(world);
+        setX(x);
+        setY(y);
+        setZ(z);
+        setPitch(pitch);
+        setYaw(yaw);
+        setDesc(homeDesc);
+    }
+
     /**
      * @return the world
      */
@@ -143,7 +154,7 @@ public class Home {
      * @return the home as a location object
      */
     public Location toLocation() {
-        return new Location(Bukkit.getServer().getWorld(this.getWorld()), getX(), getY(), getZ(), getPitch(), getYaw());
+        return new Location(Bukkit.getServer().getWorld(this.getWorld()), getX(), getY(), getZ(), getYaw(), getPitch());
     }
 
     /**
