@@ -3,6 +3,7 @@ package com.samleighton.xquiset.sethomes;
 import com.samleighton.xquiset.sethomes.commands.*;
 import com.samleighton.xquiset.sethomes.configurations.Database;
 import com.samleighton.xquiset.sethomes.configurations.Homes;
+import com.samleighton.xquiset.sethomes.configurations.Permissions;
 import com.samleighton.xquiset.sethomes.configurations.WorldBlacklist;
 import com.samleighton.xquiset.sethomes.database.MySQLConnector;
 import com.samleighton.xquiset.sethomes.eventListeners.EventListener;
@@ -26,7 +27,7 @@ import java.util.logging.Level;
 
 /**
  * @author Xquiset
- * @version 1.3.1
+ * @version 1.4.0
  */
 public class SetHomes extends JavaPlugin {
 
@@ -154,6 +155,11 @@ public class SetHomes extends JavaPlugin {
             }
             if (!config.isSet("tp-cooldown-msg")) {
                 config.set("tp-cooldown-msg", "§4You must wait another %s second(s) before teleporting!");
+            }
+            if (!config.isSet("simple-permissions")) {
+                config.set("simple-permissions.home", "ops");
+                config.set("simple-permissions.sethome", "ops");
+                config.set("simple-permissions.uhome", "ops");
             }
         }
 
@@ -338,6 +344,24 @@ public class SetHomes extends JavaPlugin {
         }
 
         return maxHomes;
+    }
+
+
+    /**
+     * Gets any simple permissions from the config and creates a Permissions object
+     * that combines those with any permissions set up in Vault/LuckyPerms
+     *
+     * @return a Permissions object
+     */
+    public Permissions getPermissions() {
+        HashMap<String, String> simplePermissions = new HashMap<>();
+        String simplePermissionsPath = "simple-permissions";
+
+        for (String id : Objects.requireNonNull(config.getConfigurationSection(simplePermissionsPath)).getKeys(false)) {
+            simplePermissions.put(id, config.getString(simplePermissionsPath + "." + id));
+        }
+
+        return new Permissions(simplePermissions, getVaultPermissions(), getLuckPermsApi(), getMaxHomes());
     }
 
     /**

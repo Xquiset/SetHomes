@@ -1,6 +1,7 @@
 package com.samleighton.xquiset.sethomes.commands;
 
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.configurations.Permissions;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,9 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Strike implements CommandExecutor {
+    private final Permissions permissions;
 
     public Strike(SetHomes plugin) {
         //Needed so that we can create an object for the command executor in onEnable
+        permissions = plugin.getPermissions();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -31,7 +34,7 @@ public class Strike implements CommandExecutor {
 
         if (cmd.getName().equalsIgnoreCase("strike")) {
             Player p = (Player) sender;
-            if (p.hasPermission("homes.strike")) {
+            if (permissions.permit(p, "strike")) {
                 PlayerInventory pInventory = p.getInventory();
                 ItemStack fishingRod = new ItemStack(Material.FISHING_ROD, 1);
                 ItemMeta rodMeta = fishingRod.getItemMeta();

@@ -1,6 +1,7 @@
 package com.samleighton.xquiset.sethomes.commands;
 
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.configurations.Permissions;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,9 +11,11 @@ import org.bukkit.entity.Player;
 public class SetMax implements CommandExecutor {
 
     private final SetHomes pl;
+    private final Permissions permissions;
 
     public SetMax(SetHomes plugin) {
         pl = plugin;
+        permissions = plugin.getPermissions();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -24,7 +27,7 @@ public class SetMax implements CommandExecutor {
                 Player p = (Player) sender;
 
                 // Test to see if the player has the proper permissions
-                if (!p.hasPermission("homes.setmax")) {
+                if (!permissions.permit(p, "setmax")) {
                     // Send player permission error message
                     ChatUtils.permissionError(p);
                     return true;

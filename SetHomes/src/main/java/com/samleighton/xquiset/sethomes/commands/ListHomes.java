@@ -1,6 +1,7 @@
 package com.samleighton.xquiset.sethomes.commands;
 
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.configurations.Permissions;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -17,9 +18,11 @@ public class ListHomes implements CommandExecutor {
 
     private final SetHomes pl;
     private final String filler = StringUtils.repeat("-", 53);
+    private final Permissions permissions;
 
     public ListHomes(SetHomes plugin) {
         this.pl = plugin;
+        permissions = plugin.getPermissions();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -34,7 +37,7 @@ public class ListHomes implements CommandExecutor {
             Player p = (Player) sender;
 
             if (args.length == 1) {
-                if (p.hasPermission("homes.gethomes")) {
+                if (permissions.permit(p, "gethomes")) {
                     //Create a offline player for the name they passed
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
                     //Check to make sure the player has actually joined the server

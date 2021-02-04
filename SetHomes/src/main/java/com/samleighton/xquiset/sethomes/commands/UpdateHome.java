@@ -2,6 +2,7 @@ package com.samleighton.xquiset.sethomes.commands;
 
 import com.samleighton.xquiset.sethomes.Home;
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.configurations.Permissions;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,9 +18,11 @@ import java.util.HashMap;
 public class UpdateHome implements CommandExecutor {
 
     private final SetHomes pl;
+    private final Permissions permissions;
 
     public UpdateHome(SetHomes plugin) {
         this.pl = plugin;
+        permissions = plugin.getPermissions();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -35,7 +38,7 @@ public class UpdateHome implements CommandExecutor {
         // Check to make sure uhome was called
         if (cmd.getName().equalsIgnoreCase("uhome")) {
             // Ensure the player has proper permission
-            if (!p.hasPermission("homes.uhome")) {
+            if (!permissions.permit(p, "uhome")) {
                 // Send player permission error notice
                 ChatUtils.permissionError(p);
                 return false;
@@ -46,7 +49,7 @@ public class UpdateHome implements CommandExecutor {
             Location home = p.getLocation();
 
             // Check to make sure the player is not trying to bypass the blacklist
-            if (pl.getBlacklistedWorlds().contains(home.getWorld().getName()) && !p.hasPermission("homes.config_bypass")) {
+            if (pl.getBlacklistedWorlds().contains(home.getWorld().getName()) && !permissions.permit(p, "config_bypass")) {
                 ChatUtils.sendError(p, "This world does not allow the usage of homes!");
                 return true;
             }
@@ -116,7 +119,7 @@ public class UpdateHome implements CommandExecutor {
 
         if (cmd.getName().equalsIgnoreCase("uhome-of")) {
             // Ensure the player has proper permission
-            if (!p.hasPermission("homes.uhome-of")) {
+            if (!permissions.permit(p, "uhome-of")) {
                 // Send player permission error notice
                 ChatUtils.permissionError(p);
                 return false;

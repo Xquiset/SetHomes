@@ -1,6 +1,7 @@
 package com.samleighton.xquiset.sethomes.commands;
 
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.configurations.Permissions;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,9 +13,11 @@ import org.bukkit.entity.Player;
 
 public class DeleteHome implements CommandExecutor {
     private final SetHomes pl;
+    private final Permissions permissions;
 
     public DeleteHome(SetHomes plugin) {
         this.pl = plugin;
+        permissions = plugin.getPermissions();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -29,7 +32,7 @@ public class DeleteHome implements CommandExecutor {
         Player p = (Player) sender;
         if (cmd.getName().equalsIgnoreCase("delhome")) {
             //Check for proper permissions
-            if (!p.hasPermission("homes.delhome")) {
+            if (!permissions.permit(p, "delhome")) {
                 ChatUtils.permissionError(p);
                 return false;
             }
@@ -70,7 +73,7 @@ public class DeleteHome implements CommandExecutor {
 
         if (cmd.getName().equalsIgnoreCase("delhome-of")) {
             //Check for proper permissions
-            if (!p.hasPermission("homes.delhome-of")) {
+            if (!permissions.permit(p, "delhome-of")) {
                 ChatUtils.permissionError(p);
                 return false;
             }
