@@ -47,8 +47,10 @@ public class EventListener implements Listener {
 
         // If the item is the rod that we created strike lighting bolt at the location the player is looking on click
         if (itemMeta != null) {
-            if (itemMeta.getLocalizedName().equalsIgnoreCase("almighty")) {
-                p.getWorld().strikeLightning(p.getTargetBlock(null, 200).getLocation());
+            if (itemMeta.hasLocalizedName()) {
+                if (itemMeta.getLocalizedName().equalsIgnoreCase("almighty")) {
+                    p.getWorld().strikeLightning(p.getTargetBlock(null, 200).getLocation());
+                }
             }
         }
 
