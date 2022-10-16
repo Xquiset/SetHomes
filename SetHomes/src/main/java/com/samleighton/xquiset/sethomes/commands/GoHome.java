@@ -1,6 +1,7 @@
 package com.samleighton.xquiset.sethomes.commands;
 
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.configurations.Permissions;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
@@ -25,12 +26,14 @@ public class GoHome implements CommandExecutor, Listener {
     private final boolean cancelOnMove;
     private Location locale = null;
     private Player p;
+    private final Permissions permissions;
 
     public GoHome(SetHomes plugin) {
         pl = plugin;
         cooldown = pl.getConfig().getInt("tp-cooldown");
         cancelOnMove = pl.getConfig().getBoolean("tp-cancelOnMove");
         pl.getServer().getPluginManager().registerEvents(this, pl);
+        permissions = plugin.getPermissions();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -51,7 +54,7 @@ public class GoHome implements CommandExecutor, Listener {
             final String uuid = p.getUniqueId().toString();
 
             //If cooldown is active in config then check to see if player is in cooldown list
-            if (!(cooldownList.containsKey(uuid)) || cooldown <= 0 || p.hasPermission("homes.config_bypass")) {
+            if (!(cooldownList.containsKey(uuid)) || cooldown <= 0 || permissions.permit(p, "config_bypass")) {
                 //Player was not in cooldown list so try and teleport then
                 //Teleport was successful so we return true
                 return teleportHome(p, uuid, args);
@@ -77,7 +80,7 @@ public class GoHome implements CommandExecutor, Listener {
         }
 
         if (cmd.getName().equalsIgnoreCase("home-of")) {
-            if (!p.hasPermission("homes.home-of")) {
+            if (!permissions.permit(p, "home-of")) {
                 ChatUtils.permissionError(p);
                 return false;
             }
@@ -127,7 +130,7 @@ public class GoHome implements CommandExecutor, Listener {
                 return false;
             } else {
                 //Teleport the player to their home and send them a message telling them so
-                if (pl.getConfig().getInt("tp-delay") > 0 && !p.hasPermission("homes.config_bypass")) {
+                if (pl.getConfig().getInt("tp-delay") > 0 && !permissions.permit(p, "config_bypass")) {
                     //Run a timer to countdown the amount of time for tp delay and display a message on the users screen
                     taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                         int delay = pl.getConfig().getInt("tp-delay");
@@ -180,7 +183,7 @@ public class GoHome implements CommandExecutor, Listener {
             }
             final String homeName = args[0];
             //Teleport the player to there home and send them a message telling them so
-            if (pl.getConfig().getInt("tp-delay") > 0 && !p.hasPermission("homes.config_bypass")) {
+            if (pl.getConfig().getInt("tp-delay") > 0 && !permissions.permit(p, "config_bypass")) {
                 //Run a timer to countdown the amount of time for tp delay and display a message on the users screen
                 taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                     int delay = pl.getConfig().getInt("tp-delay");
@@ -238,7 +241,7 @@ public class GoHome implements CommandExecutor, Listener {
                 return false;
             } else {
                 //Teleport the player to the home and send them a message telling them so
-                if (pl.getConfig().getInt("tp-delay") > 0 && !p.hasPermission("homes.config_bypass")) {
+                if (pl.getConfig().getInt("tp-delay") > 0 && !permissions.permit(p, "config_bypass")) {
                     //Run a timer to countdown the amount of time for tp delay and display a message on the users screen
                     taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                         int delay = pl.getConfig().getInt("tp-delay");
@@ -287,7 +290,7 @@ public class GoHome implements CommandExecutor, Listener {
             }
 
             //Teleport the player to there home and send them a message telling them so
-            if (pl.getConfig().getInt("tp-delay") > 0 && !p.hasPermission("homes.config_bypass")) {
+            if (pl.getConfig().getInt("tp-delay") > 0 && !permissions.permit(p, "config_bypass")) {
                 //Run a timer to countdown the amount of time for tp delay and display a message on the users screen
                 taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
                     int delay = pl.getConfig().getInt("tp-delay");

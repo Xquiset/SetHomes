@@ -1,6 +1,7 @@
 package com.samleighton.xquiset.sethomes.commands;
 
 import com.samleighton.xquiset.sethomes.SetHomes;
+import com.samleighton.xquiset.sethomes.configurations.Permissions;
 import com.samleighton.xquiset.sethomes.utils.ChatUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -17,9 +18,11 @@ import java.util.List;
 public class Blacklist implements CommandExecutor {
 
     private final SetHomes pl;
+    private final Permissions permissions;
 
     public Blacklist(SetHomes plugin) {
         this.pl = plugin;
+        permissions = plugin.getPermissions();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -37,7 +40,7 @@ public class Blacklist implements CommandExecutor {
             //If they pass no parameters to the command then just list the worlds blacklisted
             if (args.length == 0) {
                 //Check for proper permissions
-                if (p.hasPermission("homes.blacklist_list")) {
+                if (permissions.permit(p, "blacklist_list")) {
                     if (pl.getBlacklistedWorlds().size() > 0) {
                         p.sendMessage(ChatColor.DARK_RED + "All blacklisted worlds:");
                         p.sendMessage(filler);
@@ -59,7 +62,7 @@ public class Blacklist implements CommandExecutor {
                 //Adding a world to the blacklist
                 if (args[0].equalsIgnoreCase("add")) {
                     //Check for proper permissions
-                    if (p.hasPermission("homes.blacklist_add")) {
+                    if (permissions.permit(p, "blacklist_add")) {
                         //They must specify a world name for this command.
                         if (args.length == 2) {
                             //Check to make sure what they entered is actually a valid world and that it is not in the blacklist already.
@@ -88,7 +91,7 @@ public class Blacklist implements CommandExecutor {
                     //Removing a world from the blacklist
                 } else if (args[0].equalsIgnoreCase("remove")) {
                     //Check for proper permissions
-                    if (p.hasPermission("homes.blacklist_remove")) {
+                    if (permissions.permit(p, "blacklist_remove")) {
                         //They must specify a world name for this command.
                         if (args.length == 2) {
                             //Check to make sure the world is actually in the blacklist

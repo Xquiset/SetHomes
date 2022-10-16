@@ -37,6 +37,15 @@ Simply place the downloaded jar into your server plugins folder.
 - **homes.uhome-of** - Give the ability to update other players homes
 - **homes.setmax** - Give the ability to set a maximum number of homes for a permission group
 
+# Simple Permissions
+Adding `simple-permissions` to the config allows you to grant a permission above to all users without having to install and configure Vault or LuckPerms.
+```yaml
+simple-permissions:
+  home: allow
+  sethome: allow
+  uhome: allow
+```
+
 # Default Config
 ```yaml
 # --------------------------
